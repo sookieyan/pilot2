@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USYD Cognitive Flexibility</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="prefetch" href="page5.html">
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>T灵活推理任务(4)</h1>
+
+        <div class="text-container">
+            <div id="text1" class="text-content">
+            </div>
+
+            <div id="text2" class="text-content" style="display: none;">
+                <p>现在这些词语再次被重新打乱。</p>
+            </div>
+
+            <div id="text3" class="text-content" style="display: none;">
+                <p>现在这些词语再次被重新打乱。</p>
+            </div>
+
+            <div id="text4" class="text-content" style="display: none;">
+                <p>现在这些词语再次被重新打乱。</p>
+            </div>
+
+            <div id="text5" class="text-content" style="display: none;">
+                <p>现在这些词语再次被重新打乱。</p>
+            </div>
+        </div>
+
+        <div class="word-container">
+            <div class="word-box-left">绿色</div>
+            <div class="word-box-right-container">
+                <div id="boxes1"
+                    style="display: grid; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right">
+                        <span class="word-item">紫罗兰色</span>
+                        <span class="word-item">信念</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item">冰球</span>
+                        <span class="word-item">保密</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item">氯气</span>
+                        <span class="word-item">福禄</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item">蓝色</span>
+                        <span class="word-item">贪婪的</span>
+                    </div>
+                </div>
+
+                <div id="boxes2"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right">
+                        <span class="word-item" id="word1">紫罗兰色</span>
+                        <span class="word-item" id="word2">信念</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item" id="word3">冰球</span>
+                        <span class="word-item" id="word4">保密</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item" id="word5">氯气</span>
+                        <span class="word-item" id="word6">福禄</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item" id="word7">蓝色</span>
+                        <span class="word-item" id="word8">贪婪的</span>
+                    </div>
+                </div>
+
+                <div id="boxes3-positions"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px; position: absolute; visibility: hidden;">
+                    <div class="word-box-right">
+                        <span class="word-item" id="target1">保密</span>
+                        <span class="word-item" id="target2">信念</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item" id="target3">氯气</span>
+                        <span class="word-item" id="target4">蓝色</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item" id="target5">冰球</span>
+                        <span class="word-item" id="target6">福禄</span>
+                    </div>
+                    <div class="word-box-right">
+                        <span class="word-item" id="target7">紫罗兰色</span>
+                        <span class="word-item" id="target8">贪婪的</span>
+                    </div>
+                </div>
+
+                <div id="boxes3"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right">保密<br>信念</div>
+                    <div class="word-box-right">氯气<br>蓝色</div>
+                    <div class="word-box-right">冰球<br>福禄</div>
+                    <div class="word-box-right">紫罗兰色<br>贪婪的</div>
+                </div>
+
+                <div id="boxes4"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div id="correctPair" class="word-box-right">保密<br>信念</div>
+                    <div class="word-box-right">氯气<br>蓝色</div>
+                    <div class="word-box-right">冰球<br>福禄</div>
+                    <div class="word-box-right">紫罗兰色<br>贪婪的</div>
+                </div>
+
+                <div id="boxes5"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right selected">保密<br>信念</div>
+                    <div class="word-box-right">氯气<br>蓝色</div>
+                    <div class="word-box-right">冰球<br>福禄</div>
+                    <div class="word-box-right">紫罗兰色<br>贪婪的</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-text-container">
+            <div id="bottom1" class="bottom-text-content"></div>
+            <div id="bottom2" class="bottom-text-content" style="display: none;"></div>
+            <div id="bottom3" class="bottom-text-content" style="display: none;"></div>
+
+            <div id="bottom4" class="bottom-text-content" style="display: none;">
+                <p>任务目标保持不变：找到与左侧词语最匹配的一组。 <br>
+                   同样， <b>旧的分类规则不再适用了</b>。您需要找到另一个 <b>新规则</b>。
+                   现在哪对词语是正确答案？</p>
+            </div>
+
+            <div id="bottom5" class="bottom-text-content" style="display: none;">
+                <p>任务目标保持不变：找到与左侧词语最匹配的一组。 <br>
+                   同样， <b>旧的分类规则不再适用了</b>。您需要找到另一个 <b>新规则</b>。
+                   现在哪对词语是正确答案？</p>
+                <p>词语保密和信念<b>两字</b>词语，其中第一个字是<b>左右结构</b>，第二个字是<b>上下结构</b>，绿色也是如此。因此，
+                    现在<b>左上角</b>的那对词语是正确的答案。</p>
+            </div>
+        </div>
+
+
+        <div class="footer-bar">
+            <div class="left-button">
+                <button id="confirmBtn" class="confirm-button">&lt; 请点击鼠标左键继续 &gt;</button>
+                <button id="backBtn" class="confirm-button" style="display: none;">&lt; 返回 &gt;</button>
+            </div>
+            <div class="center-button">
+                <div class="click-instruction">请<b>点击</b>这组词来继续下一页。</div>
+            </div>
+            <div class="right-button">
+                <a href="page5.html" id="continueBtn" class="continue-button"><b>点击</b> 此处 &lt; 继续 &gt;</a>
+            </div>
+        </div>
+
+        
+        <script>
+            let currentStep = 1;
+            const confirmBtn = document.getElementById('confirmBtn');
+            const continueBtn = document.getElementById('continueBtn');
+            const backBtn = document.getElementById('backBtn');
+            const clickInstruction = document.querySelector('.click-instruction');
+
+            function handlePageClick() {
+                if (confirmBtn.style.display !== 'none') {
+                    confirmBtn.click();
+                }
+            }
+
+            document.addEventListener('click', handlePageClick);
+
+
+            function showStep(step) {
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`text${i}`).style.display = 'none';
+                    if (i !== 2 || !document.getElementById('boxes2-animated')) {
+                        document.getElementById(`boxes${i}`).style.display = 'none';
+                    }
+                    document.getElementById(`bottom${i}`).style.display = 'none';
+                }
+
+                document.getElementById(`text${step}`).style.display = 'block';
+
+                if ((step === 3 || step === 4 || step === 5) && document.getElementById('boxes2-animated')) {
+                    const animatedBoxes = document.getElementById('boxes2-animated');
+                    animatedBoxes.style.display = 'grid';
+
+                    const boxes = animatedBoxes.querySelectorAll('.word-box-right');
+
+                    boxes.forEach(box => box.classList.remove('selected'));
+
+                    if (step === 5) {
+                        boxes[0].classList.add('selected');
+                    }
+                } else {
+                    document.getElementById(`boxes${step}`).style.display = 'grid';
+                }
+
+                document.getElementById(`bottom${step}`).style.display = 'block';
+
+                if (step === 5) {
+                    const selectedBox = document.querySelector('#boxes5 .word-box-right.selected');
+                    if (selectedBox) {
+                        const newSelectedBox = selectedBox.cloneNode(true);
+                        selectedBox.parentNode.replaceChild(newSelectedBox, selectedBox);
+                        
+                        newSelectedBox.style.cursor = 'pointer';
+                        newSelectedBox.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            window.location.href = 'page5.html';
+                        });
+                    }
+                    
+                    if (document.getElementById('boxes2-animated')) {
+                        const animatedBoxes = document.getElementById('boxes2-animated');
+                        const firstBox = animatedBoxes.querySelector('.word-box-right:first-child');
+                        if (firstBox) {
+                            const newFirstBox = firstBox.cloneNode(true);
+                            firstBox.parentNode.replaceChild(newFirstBox, firstBox);
+                            
+                            newFirstBox.style.cursor = 'pointer';
+                            newFirstBox.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                window.location.href = 'page5.html';
+                            });
+                        }
+                    }
+                    
+                    clickInstruction.innerHTML = '请<b>点击</b> 这组词来继续下一页。';
+                    confirmBtn.style.display = 'none';
+                    backBtn.style.display = 'block';
+                }
+            }
+
+            function animateWords() {
+                confirmBtn.style.display = 'none';
+
+                const targetPositions = document.getElementById('boxes3-positions');
+                targetPositions.style.display = 'grid';
+                targetPositions.style.visibility = 'hidden';
+
+                const word1 = document.getElementById('word1'); // VIOLET
+                const word2 = document.getElementById('word2'); // WRONG
+                const word3 = document.getElementById('word3'); // PUCK
+                const word4 = document.getElementById('word4'); // FIRST
+                const word5 = document.getElementById('word5'); // FEEDER
+                const word6 = document.getElementById('word6'); // MEET
+                const word7 = document.getElementById('word7'); // BLUE
+                const word8 = document.getElementById('word8'); // GREED
+
+                const target1 = document.getElementById('target1'); // FIRST
+                const target2 = document.getElementById('target2'); // WRONG
+                const target3 = document.getElementById('target3'); // FEEDER
+                const target4 = document.getElementById('target4'); // BLUE
+                const target5 = document.getElementById('target5'); // PUCK
+                const target6 = document.getElementById('target6'); // MEET
+                const target7 = document.getElementById('target7'); // VIOLET
+                const target8 = document.getElementById('target8'); // GREED
+
+                const rect1 = word1.getBoundingClientRect();
+                const rect2 = word2.getBoundingClientRect();
+                const rect3 = word3.getBoundingClientRect();
+                const rect4 = word4.getBoundingClientRect();
+                const rect5 = word5.getBoundingClientRect();
+                const rect6 = word6.getBoundingClientRect();
+                const rect7 = word7.getBoundingClientRect();
+                const rect8 = word8.getBoundingClientRect();
+
+                const targetRect1 = target1.getBoundingClientRect();
+                const targetRect2 = target2.getBoundingClientRect();
+                const targetRect3 = target3.getBoundingClientRect();
+                const targetRect4 = target4.getBoundingClientRect();
+                const targetRect5 = target5.getBoundingClientRect();
+                const targetRect6 = target6.getBoundingClientRect();
+                const targetRect7 = target7.getBoundingClientRect();
+                const targetRect8 = target8.getBoundingClientRect();
+
+                const dx1 = targetRect7.left - rect1.left;
+                const dy1 = targetRect7.top - rect1.top;
+
+                const dx2 = targetRect2.left - rect2.left;
+                const dy2 = targetRect2.top - rect2.top;
+
+                const dx3 = targetRect5.left - rect3.left;
+                const dy3 = targetRect5.top - rect3.top;
+
+                const dx4 = targetRect1.left - rect4.left;
+                const dy4 = targetRect1.top - rect4.top;
+
+                const dx5 = targetRect3.left - rect5.left;
+                const dy5 = targetRect3.top - rect5.top;
+
+                const dx6 = targetRect6.left - rect6.left;
+                const dy6 = targetRect6.top - rect6.top;
+
+                const dx7 = targetRect4.left - rect7.left;
+                const dy7 = targetRect4.top - rect7.top;
+
+                const dx8 = targetRect8.left - rect8.left;
+                const dy8 = targetRect8.top - rect8.top;
+
+                targetPositions.style.display = 'none';
+
+                setTimeout(() => {
+                    word1.style.transform = `translate(${dx1}px, ${dy1}px)`;
+                    word2.style.transform = `translate(${dx2}px, ${dy2}px)`;
+                    word3.style.transform = `translate(${dx3}px, ${dy3}px)`;
+                    word4.style.transform = `translate(${dx4}px, ${dy4}px)`;
+                    word5.style.transform = `translate(${dx5}px, ${dy5}px)`;
+                    word6.style.transform = `translate(${dx6}px, ${dy6}px)`;
+                    word7.style.transform = `translate(${dx7}px, ${dy7}px)`;
+                    word8.style.transform = `translate(${dx8}px, ${dy8}px)`;
+
+                    setTimeout(() => {
+                        const boxes2 = document.getElementById('boxes2');
+                        const boxes2Clone = boxes2.cloneNode(true);
+                        boxes2Clone.id = 'boxes2-animated';
+
+                        const container = document.querySelector('.word-box-right-container');
+                        container.appendChild(boxes2Clone);
+
+                        const clonedWords = boxes2Clone.querySelectorAll('.word-item');
+
+                        clonedWords.forEach(word => {
+                            word.style.pointerEvents = 'none';
+                        });
+
+                        const boxesInClone = boxes2Clone.querySelectorAll('.word-box-right');
+
+                        const correctPairClone = boxesInClone[0];
+                        correctPairClone.style.cursor = 'pointer';
+                        correctPairClone.id = 'correctPairAnimated';
+                        correctPairClone.addEventListener('click', function () {
+                            if (currentStep === 4) {
+                                currentStep = 5;
+                                showStep(5);
+                                confirmBtn.style.display = 'none';
+                                clickInstruction.style.display = 'block';
+                            } else if (currentStep === 5) {
+                                window.location.href = 'page5.html';
+                            }
+                        });
+
+                        for (let i = 1; i <= 5; i++) {
+                            document.getElementById(`text${i}`).style.display = 'none';
+                            if (i !== 2) { 
+                                document.getElementById(`boxes${i}`).style.display = 'none';
+                            }
+                            document.getElementById(`bottom${i}`).style.display = 'none';
+                        }
+
+                        document.getElementById('text3').style.display = 'block';
+                        document.getElementById('boxes2').style.display = 'none';
+                        boxes2Clone.style.display = 'grid';
+                        document.getElementById('bottom3').style.display = 'block';
+
+                        confirmBtn.style.display = 'block';
+
+                        //setupCorrectPairAnimated();
+                    }, 1000);
+                }, 100);
+            }
+
+            function handleConfirmClick() {
+                currentStep++;
+
+                if (currentStep === 2) {
+                    showStep(2);
+                } else if (currentStep === 3) {
+                    animateWords();
+                } else if (currentStep === 4) {
+                    showStep(4);
+                    //confirmBtn.style.display = 'none';
+                } else if (currentStep === 5) {
+                    showStep(5);
+                    confirmBtn.style.display = 'none';
+                    clickInstruction.style.display = 'block';
+                }
+            }
+
+            confirmBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handleConfirmClick();
+            });
+
+            backBtn.addEventListener('click', function() {
+                window.location.href = 'page3.html';
+            });
+
+            // document.getElementById('correctPair').addEventListener('click', function (e) {
+            //     e.stopPropagation();
+
+            //     if (currentStep === 4) {
+            //         currentStep = 5;
+            //         showStep(5);
+            //         confirmBtn.style.display = 'none';
+            //         clickInstruction.style.display = 'block';
+            //     } else if (currentStep === 5) {
+            //         window.location.href = 'page5.html';
+            //     }
+            // });
+
+            // function setupCorrectPairAnimated() {
+            //     const correctPairAnimated = document.getElementById('correctPairAnimated');
+            //     if (correctPairAnimated) {
+            //         const newCorrectPairAnimated = correctPairAnimated.cloneNode(true);
+            //         correctPairAnimated.parentNode.replaceChild(newCorrectPairAnimated, correctPairAnimated);
+                    
+            //         newCorrectPairAnimated.style.cursor = 'pointer';
+            //         newCorrectPairAnimated.id = 'correctPairAnimated';
+            //         newCorrectPairAnimated.addEventListener('click', function (e) {
+            //             e.stopPropagation();
+                        
+            //             if (currentStep === 4) {
+            //                 currentStep = 5;
+            //                 showStep(5);
+            //                 confirmBtn.style.display = 'none';
+            //                 clickInstruction.style.display = 'block';
+            //             } else if (currentStep === 5) {
+            //                 window.location.href = 'page5.html';
+            //             }
+            //         });
+            //     }
+            // }
+
+            showStep(1);
+
+            clickInstruction.style.display = 'none';
+
+            continueBtn.style.display = 'none';
+        </script>
+    </div>
+</body>
+
+</html>

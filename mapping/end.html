@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USYD Cognitive Flexibility</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .finish-button {
+            font-family: 'Aptos', sans-serif;
+            font-size: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            right: 50px;
+            bottom: 30px;
+            font-weight: normal;
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+        
+        .completion-message {
+            font-family: 'Aptos', sans-serif;
+            font-size: 40px;
+            text-align: left;
+            max-width: 80%;
+            line-height: 1.5;
+            margin: 0 auto;
+            margin-top: 150px;
+            margin-left: 10%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content-container">
+        <div class="completion-message">
+            <p>您已成功完成本任务。</p>
+            <p>感谢您的参与。</p>
+        </div>
+        
+        <button id="finishBtn" class="finish-button">&lt; 完成 &gt;</button>
+    </div>
+
+    <script>
+        const subject = localStorage.getItem('subject');
+        localStorage.removeItem('subject');
+        console.log(subject);
+
+        document.getElementById('finishBtn').addEventListener('click', function() {
+            fetch('url.txt')
+                .then(response => response.text())
+                .then(url => {
+                    if (url && url.trim() !== '') {
+                        const redirectURL = new URL(url.trim());
+                        if (subject) {
+                            redirectURL.searchParams.append('subject', subject);
+                        }
+                        
+                        window.location.href = redirectURL.toString();
+                    } else {
+                        window.close();
+                        
+                        if (!window.closed) {
+                            alert("感谢您的参与！您现在可以安全地关闭此页面。");
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error reading URL file:', error);
+                    window.close();
+                });
+        });
+    </script>
+</body>
+
+</html>

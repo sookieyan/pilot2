@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Flexible Mapping Task</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="prefetch" href="page4.html">
+    <script>
+        MathJax.typeset();
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                macros: {
+                    boldsymbol: ["\\boldsymbol{#1}", 1]
+                }
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            chtml: {
+                scale: 1.2
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <style>
+        .number-option p {
+            margin: 0;
+            padding: 0;
+            display: inline;
+            font-weight: bold;
+        }
+        
+        mjx-container {
+            font-size: 40px !important;
+            display: inline !important;
+            font-weight: bold !important;
+        }
+        
+        mjx-math {
+            font-weight: bold !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>灵活映射任务(3)</h1>
+
+        <div id="step1" class="step-content active">
+            <p>在第三个也是最后一个例子中，仍然呈现相同的一对词，但这一次第三项是一个数字。</p>
+            <div class="analogy-container">
+                <strong style="font-size: 40px;">热 : 冷 :: \(16\) : ？</strong>
+            </div>
+            <div class="options-container">
+                <span class="number-option">\(4\)</span>
+                <span class="number-option">\(\sqrt{16}\)</span>
+                <span class="number-option">\(4^2\)</span><!-- <span class="number-option">4<sup>2</sup></span> -->
+                <span class="number-option">\(-16\)</span>
+            </div>
+        </div>
+
+        <div id="step2" class="step-content">
+            <p>在第三个也是最后一个例子中，仍然呈现相同的一对词，但这一次第三项是一个数字。</p>
+            <div class="analogy-container">
+                <strong style="font-size: 40px;">热 : 冷 :: \(16\) : ？</strong>
+            </div>
+            <div class="options-container">
+                <span class="number-option">\(4\)</span>
+                <span class="number-option">\(\sqrt{16}\)</span>
+                <span class="number-option">\(4^2\)</span>
+                <span class="number-option selected" id="correctAnswer">\(-16\)</span>
+            </div>
+            <p>这个任务与前面的例子相同：请找出与16 具有“相反关系”的选项。</p>
+            <p>答案选项中的<strong>最后一个</strong> 是该类比的正确答案。</p>
+        </div>
+    </div>
+
+
+    <div class="footer-bar">
+        <div class="footer-left">
+            <button id="confirmBtn" class="confirm-button">&lt; 请点击鼠标左键继续 &gt;</button>
+            <button id="backBtn" class="confirm-button" style="display: none;">&lt; 返回 &gt;</button>
+        </div>
+        <div class="footer-center" id="footerCenter">
+            <div class="click-instruction" style="display: none;">
+                <p>请<strong>点击</strong> 这个答案选项来完成这个类比并继续下一步。</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 2;
+        const confirmBtn = document.getElementById('confirmBtn');
+        const correctAnswer = document.getElementById('correctAnswer');
+        const clickInstruction = document.querySelector('.click-instruction');
+        const backBtn = document.getElementById('backBtn');
+
+        function handlePageClick() {
+            if (confirmBtn.style.display !== 'none') {
+                confirmBtn.click();
+            }
+        }
+
+        document.addEventListener('click', handlePageClick);
+
+        function handleConfirmClick() {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                
+                if (currentStep === totalSteps) {
+                    confirmBtn.style.display = 'none';
+                    clickInstruction.style.display = 'block';
+                    backBtn.style.display = 'block';
+                }
+            }
+        }
+
+        confirmBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            handleConfirmClick();
+        });
+
+        correctAnswer.addEventListener('click', function () {
+            window.location.href = 'page4.html';
+        });
+
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'page2.html';
+        });
+    </script>
+</body>
+
+</html>

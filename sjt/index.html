@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>情境判断任务 SJT</title>
+
+<!-- 中文字体 -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+  * { font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+</style>
+
+<!-- jsPsych 6.3.1（通过 jsDelivr CDN 加载，与悉尼服务器无关，不受其可用性影响） -->
+<script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/jspsych.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-html-button-response.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-fullscreen.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/css/jspsych.css" rel="stylesheet" type="text/css" />
+
+<style>
+  body { background: #f7f7f9; }
+  .jspsych-content { max-width: 720px; }
+
+  .sjt-bg-box {
+    background: #eef3fb;
+    border-left: 4px solid #2E5395;
+    padding: 16px 20px;
+    text-align: left;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .sjt-context-box {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    padding: 18px 22px;
+    text-align: left;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 18px;
+    line-height: 1.8;
+  }
+  .sjt-question {
+    font-weight: bold;
+    font-size: 19px;
+    margin-top: 16px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .sjt-feedback-box {
+    background: #fff8e6;
+    border: 1px solid #f0d999;
+    padding: 20px 24px;
+    text-align: left;
+    border-radius: 6px;
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+  }
+
+  /* ---- 选项按钮：统一左对齐、统一宽度、开头对齐 ---- */
+  #sjt-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .sjt-option-btn {
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;
+    white-space: normal;
+    padding: 12px 16px;
+    font-size: 17px;
+    line-height: 1.6;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #ffffff;
+    cursor: pointer;
+    display: block;
+  }
+  .sjt-option-btn:hover {
+    background: #f2f6fc;
+    border-color: #9db4d6;
+  }
+  .sjt-option-btn.sjt-selected {
+    background: #dce6f1;
+    border-color: #2E5395;
+    font-weight: bold;
+  }
+  #sjt-confirm-btn {
+    padding: 10px 28px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  #sjt-confirm-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* jsPsych 内置按钮（背景介绍页、反馈页的"继续"按钮）也保持一致风格 */
+  .jspsych-btn {
+    padding: 10px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+</style>
+</head>
+
+<body></body>
+
+<script>
+
+//======================================================
+// 0. 基本参数
+//======================================================
+var subjectID = jsPsych.randomization.randomID(10);
+var PID = jsPsych.data.urlVariables();   // 如果通过 ?PID=xxx 传参，可在此读取
+var DATAPIPE_EXPERIMENT_ID = "在这里填入你在 pipe.jspsych.org 申请到的 experimentID";
+
+// 说明：结构化推理状态标签不再单独出题询问被试，
+// 而是直接从决策题里被试实际选择的字母（chosen_letter）反推得到——
+// 见下方 REASONING_LABEL_MAP 对照表，以及 saveData() 里的具体用法。
+
+//======================================================
+// 1. 自定义 jsPsych 插件：sjt-forced-choice
+//    用于 SJT 决策题 和 结构化推理状态标签题，两者共用同一套交互逻辑：
+//    - 选项文字顺序随机打乱，但字母（A/B/C/D）只记录在后台数据里，绝不显示给被试
+//    - 点击某个选项只是"选中"（高亮），不会立即结束该题，被试可以反复更改选择
+//    - 必须点击"确认选择"才会真正提交、进入下一题
+//    - 全程记录：每个选项的悬停（hover）次数与时长、选择被更改的次数（switch_count）、
+//      完整的交互事件序列（interaction_log），全部是后台记录，界面上不会有任何体现
+//======================================================
+jsPsych.plugins['sjt-forced-choice'] = (function () {
+  var plugin = {};
+
+  plugin.info = {
+    name: 'sjt-forced-choice',
+    parameters: {
+      context_html:  { type: jsPsych.plugins.parameterType.HTML_STRING, default: '' },
+      question_html: { type: jsPsych.plugins.parameterType.HTML_STRING, default: '你会怎么做？' },
+      options:       { type: jsPsych.plugins.parameterType.OBJECT, default: undefined }, // [{letter, text, feedback?}, ...]
+      confirm_label: { type: jsPsych.plugins.parameterType.STRING, default: '确认选择' }
+    }
+  };
+
+  plugin.trial = function (display_element, trial) {
+    var shuffled = jsPsych.randomization.shuffle(trial.options.slice());
+    var selectedIndex = null;
+    var switchCount = 0;
+    var interactionLog = [];   // {event, option_index, letter, t}
+    var hoverStart = {};
+    var startTime = performance.now();
+
+    // ---- 渲染 ----
+    var html = '';
+    if (trial.context_html) {
+      html += '<div class="sjt-context-box">' + trial.context_html + '</div>';
+    }
+    html += '<div class="sjt-question">' + trial.question_html + '</div>';
+    html += '<div id="sjt-options">';
+    shuffled.forEach(function (opt, i) {
+      html += '<button type="button" class="sjt-option-btn" data-index="' + i + '">' + opt.text + '</button>';
+    });
+    html += '</div>';
+    html += '<div><button type="button" id="sjt-confirm-btn" class="jspsych-btn" disabled>' + trial.confirm_label + '</button></div>';
+
+    display_element.innerHTML = html;
+
+    var buttons = Array.prototype.slice.call(display_element.querySelectorAll('.sjt-option-btn'));
+    var confirmBtn = display_element.querySelector('#sjt-confirm-btn');
+
+    buttons.forEach(function (btn, i) {
+      btn.addEventListener('mouseenter', function () {
+        hoverStart[i] = performance.now();
+      });
+      btn.addEventListener('mouseleave', function () {
+        if (hoverStart[i] !== undefined) {
+          interactionLog.push({
+            event: 'hover',
+            option_index: i,
+            letter: shuffled[i].letter,
+            duration_ms: Math.round(performance.now() - hoverStart[i]),
+            t: Math.round(performance.now() - startTime)
+          });
+          delete hoverStart[i];
+        }
+      });
+      btn.addEventListener('click', function () {
+        if (selectedIndex !== null && selectedIndex !== i) {
+          switchCount++;
+        }
+        selectedIndex = i;
+        interactionLog.push({
+          event: 'select',
+          option_index: i,
+          letter: shuffled[i].letter,
+          t: Math.round(performance.now() - startTime)
+        });
+        buttons.forEach(function (b) { b.classList.remove('sjt-selected'); });
+        btn.classList.add('sjt-selected');
+        confirmBtn.disabled = false;
+      });
+    });
+
+    confirmBtn.addEventListener('click', function () {
+      if (selectedIndex === null) return;
+      var rt = Math.round(performance.now() - startTime);
+      var chosen = shuffled[selectedIndex];
+      var hoverOnlyCount = interactionLog.filter(function (e) { return e.event === 'hover'; }).length;
+
+      interactionLog.push({ event: 'confirm', option_index: selectedIndex, letter: chosen.letter, t: rt });
+
+      var data = {
+        chosen_letter: chosen.letter,
+        chosen_text: chosen.text,
+        chosen_feedback: (chosen.feedback !== undefined) ? chosen.feedback : null,
+        display_order: shuffled.map(function (o) { return o.letter; }).join(''),
+        switch_count: switchCount,
+        hover_without_click_count: hoverOnlyCount,
+        interaction_log: JSON.stringify(interactionLog),
+        rt: rt
+      };
+
+      display_element.innerHTML = '';
+      jsPsych.finishTrial(data);
+    });
+  };
+
+  return plugin;
+})();
+
+//======================================================
+// 2. 情境数据
+//    每个情境包含背景语句 background，以及 5 个决策点（base + step2~step5）
+//    每个决策点包含：context（情境描述+触发事件）、driver_type（认知/情感/中庸混合，供后续分析用，不展示给被试）、
+//                    options：四个选项，每个选项有 letter（原始字母，用于数据记录）、text（选项内容）、feedback（对应反馈）
+//======================================================
+var scenarios = [
+  {
+    id: "s1",
+    background: "你刚进入大学，加入了一个跨文化课程小组。你需要在团队任务、课堂互动和社交适应之间不断调整自己的行为。",
+    steps: [
+      {
+        id: "base",
+        driver_type: "Cognitive",
+        context: "随着截止时间临近，小组开始讨论最后的整合工作。小李说：“我来做最后的整合工作吧！”但你发现他平时对小组作业的贡献很少。",
+        options: [
+          { letter: "A", text: "询问小李他的整合计划与时间安排，并在群里需要看到整合的进度。", feedback: "小李在群里明确了工作安排；但如果能让群里气氛不那么紧张就更好了。" },
+          { letter: "B", text: "表示相信他能完成，不进一步追问。", feedback: "小李感受到了你的信任；但如果能够推动整合任务就更好了。" },
+          { letter: "C", text: "在共享文档里留下一条备注，提醒大家之后可以一起看看整合内容。", feedback: "群里互动自然；但小李的整合进度仍不清晰。" },
+          { letter: "D", text: "暂时不回应，等待后续进展。", feedback: "群里气氛看似轻松；但小李是否能完成整合任务变得更加不确定。" }
+        ]
+      },
+      {
+        id: "step2",
+        driver_type: "Zhong-yong",
+        context: "在处理完整合安排后，小组继续讨论项目中的其他问题。在后续讨论中，有人公开说：“如果发言被投诉，责任应该由发言者自己承担。”现场气氛有些紧张起来。",
+        options: [
+          { letter: "A", text: "表达不同看法，主张保障表达权利，引导组员继续讨论方案。", feedback: "讨论回到任务正轨，你的立场清晰表达了；但如果能让成员减少顾虑、更愿意发言就更好了。" },
+          { letter: "B", text: "安抚全员情绪并认同大家的担忧，缓和组内氛围。", feedback: "你的安抚让群里紧张气氛得到缓和；但如果能进一步鼓励成员主动表达，推进讨论就更好了。" },
+          { letter: "C", text: "引导组员讨论表达边界与投诉流程，维持理性互动。", feedback: "在你的引导下，成员们愿意继续发言，互动得以维持；但如果能进一步化解成员关于责任的担忧，使讨论更顺畅就更好了。" },
+          { letter: "D", text: "退出讨论，不介入互动。", feedback: "你暂时退出了讨论，避免了直接介入；但如果能推动解决责任争议，避免讨论僵局就更好了。" }
+        ]
+      },
+      {
+        id: "step3",
+        driver_type: "Zhong-yong",
+        context: "项目逐渐进入最后阶段。老师宣布：“今天的即兴发言计入最终成绩，按次数、逻辑准确性评分，可能会追问发言内容。”课堂气氛紧张，小组成员对新任务感到担心。",
+        options: [
+          { letter: "A", text: "主动举手发言，完整阐述观点，即使面对追问可能紧张，优先保障发言质量与次数。", feedback: "你的发言次数与观点完整性达到要求，有效应对了评分标准；但如果能更从容应对追问就更好了。" },
+          { letter: "B", text: "多肯定他人观点，避免争议性表达，缓解紧张氛围。", feedback: "你缓和了课堂的紧张氛围，与同学的互动十分融洽；但如果能加入更多独立观点就更好了。" },
+          { letter: "C", text: "等前两位同学发言后，复述他们观点再加一些自己的见解，快速完成发言。", feedback: "你完成了必要的发言次数，也兼顾了课堂气氛；但如果能更多展现自身逻辑就更好了。" },
+          { letter: "D", text: "不主动发言，仅在被点名时简单回应。", feedback: "你回避了主动发言的压力，心理负担较小；但如果能提前准备，在被点名时有效回应就更好了。" }
+        ]
+      },
+      {
+        id: "step4",
+        driver_type: "Affective",
+        context: "项目展示结束后，团队开始进行经验分享。一位成员对着你笑着说：“刚刚有人好像特别拘谨。”大家笑了。",
+        options: [
+          { letter: "A", text: "直接回应，说明每个人对互动的舒适度不同，表明立场，维护边界。", feedback: "你清晰表达了个人立场，维护了自我边界；但如果能减少成员对你的敏感印象，保持互动亲近就更好了。" },
+          { letter: "B", text: "笑着自嘲“还没热身好”，化解现场尴尬。", feedback: "你的自嘲及时化解了现场尴尬，话题顺利转移，互动正常；但如果能更明确地维护个人边界就更好了。" },
+          { letter: "C", text: "顺着话题说或许规则可给更多选择，引导话题方向。", feedback: "你成功将话题引向规则层面，避免了成为焦点；但如果能进一步淡化“拘谨”印象就更好了。" },
+          { letter: "D", text: "保持沉默，不回应评论，继续听他人分享。", feedback: "你未直接回应评论，避免了潜在的冲突；但如果能适度回应，避免被误解就更好了。" }
+        ]
+      },
+      {
+        id: "step5",
+        driver_type: "Zhong-yong",
+        context: "课程结束后，你逐渐认识了一些同学。小组成员小明邀请你加入一个固定周末聚会圈子。这意味更稳定的社交网，但也要持续参与类似活动。",
+        options: [
+          { letter: "A", text: "接受邀请，请小明拉你进群，专注活动安排，只处理必要信息。", feedback: "你的社交目标得到推进，成功加入了圈子；但如果能深化互动，建立更深层关系就更好了。" },
+          { letter: "B", text: "热情接受邀请，在群里主动打招呼，积极响应邀约，用心维系关系。", feedback: "成员们对你热情接纳，关系纽带变得牢固；但如果能更好地平衡个人时间与社交投入就更好了。" },
+          { letter: "C", text: "同意加入，入群后只做最简单、常规互动。", feedback: "你成功融入了社交圈，同时保留了个人空间；但如果能适度加深互动，使关系更深入就更好了。" },
+          { letter: "D", text: "婉拒，说自己适合安静节奏，专注生活和学习。", feedback: "你维持了独自生活的舒适节奏，没有社交压力；但如果能适当拓展社交，促进校园融入就更好了。" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "s2",
+    background: "你在大学里开始适应新的学习和生活环境。在这个过程中，你逐渐建立了自己的学习节奏、人际关系和校园生活安排。随着学期推进，你会遇到各种新要求，需要根据新的信息调整自己的行为。",
+    steps: [
+      {
+        id: "base",
+        driver_type: "Affective",
+        context: "你在适应大学生活的过程中，与室友逐渐熟悉。最近，室友学习压力很大，经常抱怨家务分配不公平，可能需要你的理解和回应。",
+        options: [
+          { letter: "A", text: "清晰说明自身家务边界，直面分工公平性问题。", feedback: "分工的责任边界得到了明确梳理，问题被直面；但如果能同时照顾室友情绪就更好了。" },
+          { letter: "B", text: "耐心安抚室友情绪，保持体谅包容的沟通氛围。", feedback: "温暖的沟通氛围让室友情绪得到缓和；但如果能进一步调整分工公平性就更好了。" },
+          { letter: "C", text: "倾听室友压力感受，简单梳理现有分工内容，温和沟通。", feedback: "双方在平和的气氛下梳理了现有分工；但如果能进一步优化分工分配就更好了。" },
+          { letter: "D", text: "按原有节奏完成个人任务，专注自身事务。", feedback: "你保证了个人事务的稳定推进，避免了情绪消耗；但如果能适当关注室友情绪，避免关系疏远就更好了。" }
+        ]
+      },
+      {
+        id: "step2",
+        driver_type: "Cognitive",
+        context: "随着学期进入后半段，你开始面对更多课程要求。老师突然宣布期末评分方式调整：不再只看发言次数，新增逻辑、表达准确度三项打分，概念出错或发言太少都会扣分，课堂随机点名。",
+        options: [
+          { letter: "A", text: "主动多发言，优先保证次数，即使观点不够完善，在发言过程中随机应变。", feedback: "你的发言次数充足，确保了参与部分的评分；但如果能更自然地表现，减少急切印象就更好了。" },
+          { letter: "B", text: "多呼应他人观点，避免表达发言引发争议。", feedback: "你与同学的互动非常融洽，合作关系良好；但如果能增加独立观点和发言次数，提高逻辑分就更好了。" },
+          { letter: "C", text: "发言前扫一眼笔记，想到就说，不刻意核对，也不回避开口。", feedback: "你维持了基础发言量，偶有概念回答正确；但如果能更严谨地核对知识点，减少错误就更好了。" },
+          { letter: "D", text: "减少主动发言，点名时才简单回应。", feedback: "你规避了课堂发言的犯错风险；但如果能适当增加发言次数以提高参与分就更好了。" }
+        ]
+      },
+      {
+        id: "step3",
+        driver_type: "Cognitive",
+        context: "临近期末，你担任小组作业的组长一职。老师补充说明：期末成绩除了对小组作业的贡献值，还会提高课堂参与度的占比。你现在需重新分配对小组长这一职务的投入时间，以应对评分权重变化。",
+        options: [
+          { letter: "A", text: "主动承担协调与展示角色，保障课堂参与得分，按新评分规则分配时间与任务。", feedback: "快速适应了评分变化，角色与时间分配清晰；但如果能兼顾团队关系，减少功利感就更好了。" },
+          { letter: "B", text: "维持原有小组角色，积极配合讨论，保持友好协作的团队氛围。", feedback: "团队氛围友好，协作愉快；但如果能调整策略以适应评分变化就更好了。" },
+          { letter: "C", text: "核对评分细则，调整每周任务与投入时长，稳定推进项目。", feedback: "按新规则有所调整，项目推进稳定；但如果能进一步优化调整效果就更好了。" },
+          { letter: "D", text: "沿用原有任务分工，专注完成个人负责部分。", feedback: "减少团队协调压力；但如果能关注评分变化，避免成绩受影响就更好了。" }
+        ]
+      },
+      {
+        id: "step4",
+        driver_type: "Zhong-yong",
+        context: "在小组项目逐渐推进的过程中，你遇到了一次团队合作中的规则冲突。作业提交的时间临近，群里讨论变少，但大家都知道之前发生过共享作业的事。有位上传者私下找到你，语气紧张地说听说老师会抽查作业相似度，一旦被发现所有人都要挂科，请求你不要举报互相保护。",
+        options: [
+          { letter: "A", text: "说互相保护的前提是守规则，建议停止共享，各自独立修改。", feedback: "对方接受并修改，违规风险降低；但如果能让对方感受到你的关心，维持交流就更好了。" },
+          { letter: "B", text: "安抚说不会举报，强调体谅，提议专注自己作业，可讨论思路。", feedback: "对方情绪缓解；但如果能引导对方重视独立修改，降低风险就更好了。" },
+          { letter: "C", text: "模糊回应说专注自己，不干预也不举报，维持中立态度。", feedback: "对方不再追问，你未卷入，互动稳定；但如果能协助解决群体违规风险就更好了。" },
+          { letter: "D", text: "简单回应不会举报，不再多聊，加快自身作业修改进度。", feedback: "专注自身作业修改；但如果能促使对方做出实质性修改，避免潜在牵连就更好了。" }
+        ]
+      },
+      {
+        id: "step5",
+        driver_type: "Cognitive",
+        context: "课程接近结束，老师宣布，本场讨论将改为开放式问答形式，希望通过互动提升参与度，同时要求各小组尽快确定展示方案核心内容。",
+        options: [
+          { letter: "A", text: "主动阐述自己的展示构想，并引导组员围绕该构想讨论。", feedback: "你主动提出展示思路，小组顺利进入方案细化阶段；但如果能让成员更积极参与，减少被主导感就更好了。" },
+          { letter: "B", text: "主要回应组员发言，语气温和，让大家都能参与互动。", feedback: "互动轻松友好；但如果能引导讨论聚焦到核心内容就更好了。" },
+          { letter: "C", text: "简要分享自己的想法，同时继续倾听他人观点，不主动推动讨论方向。", feedback: "小组互动顺畅；但如果能加快方案推进速度就更好了。" },
+          { letter: "D", text: "减少主动发言，被点名时简单回应，关注自己的记录或思考。", feedback: "你几乎没有贡献新的想法；但如果能积极参与，推动讨论进度就更好了。" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "s3",
+    background: "你进入大学后，开始参与课程学习、小组合作和校园生活。在适应新的学习环境过程中，你会遇到新的任务信息、他人情绪和社会互动压力，需要根据不断变化的情境调整自己的行为方式。",
+    steps: [
+      {
+        id: "base",
+        driver_type: "Zhong-yong",
+        context: "在一次课程项目合作中，小组正在准备最终展示。小明私下联系你：“我担心负责展示的小李可能不会做太多工作，但我又不想指责他引发矛盾。”",
+        options: [
+          { letter: "A", text: "和小明一起在群里公开讨论小李的展示责任。", feedback: "问题被公开化，小李的责任变得清晰；但如果能减少对小李的压力，维护人际关系就更好了。" },
+          { letter: "B", text: "先安抚小明，说别太担心，可能只是进展还没体现出来。", feedback: "你安抚了小明；但如果能确认小李的展示准备情况就更好了。" },
+          { letter: "C", text: "建议等下次小组讨论时再一起看看进展。", feedback: "小明接受了你的建议，大家同意一起查看；但如果能更早落实检查就更好了。" },
+          { letter: "D", text: "建议先不要升级问题，继续观察整体进展。", feedback: "小明依然焦虑；但如果能采取措施缓解焦虑，避免延误就更好了。" }
+        ]
+      },
+      {
+        id: "step2",
+        driver_type: "Affective",
+        context: "在后续分工讨论中，你提出了更明确的分工，小李在群里说：“你也太严肃了吧”，小红发了一个🙂表情。",
+        options: [
+          { letter: "A", text: "回应展示占课程成绩很大比例，最好尽快安排清楚。", feedback: "你推动分工更加明确，任务进度提升；但如果能减轻小李压力，保持互动轻松就更好了。" },
+          { letter: "B", text: "放缓语气，说这样做方便大家，别紧张。", feedback: "你缓和了小李情绪，关系保持友好；但如果能同时推进任务速度就更好了。" },
+          { letter: "C", text: "你表示可以慢慢看怎么分工，但暂时不继续推动具体安排。", feedback: "你减少了冲突，群里气氛平稳；但如果能进一步解决分工问题就更好了。" },
+          { letter: "D", text: "不再回应这个话题，让讨论自然转向其他内容。", feedback: "你避免了争论，讨论恢复轻松；但如果能继续推进任务安排就更好了。" }
+        ]
+      },
+      {
+        id: "step3",
+        driver_type: "Affective",
+        context: "项目讨论进入后期。在一次正式讨论中，一位同学语气变得激动：“某些传统本身就存在问题，我们不该美化它。”现场气氛突然有点紧张，讨论陷入停滞。",
+        options: [
+          { letter: "A", text: "直接表达自己的立场，并引导讨论回到正规。", feedback: "你把讨论拉回任务，展示方案继续推进；但如果能化解情绪冲突，改善团队氛围就更好了。" },
+          { letter: "B", text: "安抚对方，表示理解，缓和气氛。", feedback: "你先缓解对方情绪，现场恢复交流；但如果能同时推进任务讨论就更好了。" },
+          { letter: "C", text: "简单回应情绪，提醒大家继续讨论，但不深入处理分歧。", feedback: "你兼顾情绪和讨论，团队继续互动；但如果能进一步解决分歧就更好了。" },
+          { letter: "D", text: "保持沉默，不介入冲突，也不参与讨论引导。", feedback: "你避免介入冲突；但如果能适当引导，避免讨论停滞就更好了。" }
+        ]
+      },
+      {
+        id: "step4",
+        driver_type: "Cognitive",
+        context: "项目结束后，课程进入考试阶段。老师突然宣布：“考试包含课堂口头解释中的案例分析，不完全在课件中。”你需要重新调整复习方式。",
+        options: [
+          { letter: "A", text: "向教师明确提出考试范围疑问，推动考查内容清晰化。", feedback: "你确认考试范围，复习方向更清晰；但如果能更委婉地提问，减轻教师压力就更好了。" },
+          { letter: "B", text: "认可教师安排，主动与同学共享笔记，维护协作氛围。", feedback: "你保持同学间互助氛围；但如果能进一步明确复习重点就更好了。" },
+          { letter: "C", text: "向教师确认案例考查方向，与同学交换基础笔记，维持平稳备考与交流状态。", feedback: "你确认重点并交流资料，准备更加稳定；但如果能加深对案例的了解就更好了。" },
+          { letter: "D", text: "依据现有理解开展复习，专注完成个人备考任务。", feedback: "你保持独立复习；但如果能获取更多关键信息，避免准备不足就更好了。" }
+        ]
+      },
+      {
+        id: "step5",
+        driver_type: "Affective",
+        context: "到了期中考试周，你发现自己情绪波动较大，很难集中注意力。课堂里大家都在复习，但你也感到有些孤独。",
+        options: [
+          { letter: "A", text: "聚焦复习目标，安排专注学习时段，按计划保障复习进度。", feedback: "你专注复习，任务进度稳定；但如果能适当保持互动，减少距离感就更好了。" },
+          { letter: "B", text: "加入同学集体复习，保持轻松交流，营造安心的复习氛围。", feedback: "你获得同伴支持，情绪更加稳定；但如果能提高学习效率就更好了。" },
+          { letter: "C", text: "制定每日学习清单，调整作息节奏，维持规律有序的备考状态。", feedback: "你调整作息和计划；但如果能进一步调节情绪，减少对备考的影响就更好了。" },
+          { letter: "D", text: "专注个人安静复习，按照自身节奏完成备考任务。", feedback: "你减少干扰；但如果能寻求适度支持，缓解压力就更好了。" }
+        ]
+      }
+    ]
+  }
+];
+
+//======================================================
+// 3. 构建 timeline
+//    每个决策点的顺序：决策题（记录选择+鼠标交互）→ 反馈
+//    推理状态标签不再单独出题，改为在存数据时从 chosen_letter 反推（见 saveData）
+//======================================================
+var timeline = [];
+
+timeline.push({ type: 'fullscreen', fullscreen_mode: true });
+
+timeline.push({
+  type: 'html-button-response',
+  stimulus: '<div class="sjt-bg-box"><p>接下来你将阅读几段校园生活情境。</p>' +
+             '<p>每段情境会分成几个阶段展开，每个阶段你需要从四个选项中选择你最可能采取的做法，' +
+             '选择后会看到相应的反馈。请根据你的真实想法作答，没有标准答案。</p>' +
+             '<p>选中某个选项后会高亮显示，如果想改选，直接点其他选项即可，确认无误后点击"确认选择"进入下一步。</p></div>',
+  choices: ['开始任务']
+});
+
+scenarios.forEach(function (scenario) {
+
+  // 每个情境开始前，先展示一次背景
+  timeline.push({
+    type: 'html-button-response',
+    stimulus: '<div class="sjt-bg-box"><p>' + scenario.background + '</p></div>',
+    choices: ['继续'],
+    data: { task: 'sjt_background', scenario_id: scenario.id }
+  });
+
+  scenario.steps.forEach(function (step) {
+
+    // ---- 1) 决策题：四个行为选项，随机顺序，记录选择+鼠标交互 ----
+    var decisionTrial = {
+      type: 'sjt-forced-choice',
+      context_html: step.context,
+      question_html: '你会怎么做？',
+      options: step.options,
+      confirm_label: '确认选择',
+      data: {
+        task: 'sjt_decision',
+        scenario_id: scenario.id,
+        step_id: step.id,
+        driver_type: step.driver_type
+      }
+    };
+
+    // ---- 2) 反馈题：读取决策题记录的 chosen_feedback ----
+    var feedbackTrial = {
+      type: 'html-button-response',
+      stimulus: function () {
+        var last = jsPsych.data.get().filter({ task: 'sjt_decision' }).last(1).values()[0];
+        return '<div class="sjt-feedback-box">' + last.chosen_feedback + '</div>';
+      },
+      choices: ['继续'],
+      data: { task: 'sjt_feedback', scenario_id: scenario.id, step_id: step.id }
+    };
+
+    timeline.push(decisionTrial, feedbackTrial);
+  });
+});
+
+timeline.push({
+  type: 'html-button-response',
+  stimulus: '<div class="sjt-bg-box"><p>本部分任务已完成，感谢你的参与！</p></div>',
+  choices: ['提交'],
+  on_finish: function () { saveData(); }
+});
+
+//======================================================
+// 4. 启动实验
+//======================================================
+jsPsych.init({
+  timeline: timeline,
+  on_finish: function () {
+    // saveData() 已在最后一个 trial 的 on_finish 里触发，这里留空即可
+  }
+});
+
+//======================================================
+// 5. 保存数据到 DataPipe（不依赖悉尼服务器，落地到 OSF 项目）
+//======================================================
+
+// 字母 → 推理状态类型 对照表。
+// 这是根据 15 道题里 A/B/C/D 选项的内容规律总结出来的假设（A 偏认知/任务导向，
+// B 偏情感/关系导向，C 偏中庸/兼顾调整，D 偏经验依赖/回避），并非被试自己报告的结果。
+// 请务必对照每道题的实际选项内容逐一检查这个假设是否成立；如果某道题不符合，
+// 可以在这里为该题单独指定映射（写法见下面 STEP_LEVEL_OVERRIDE 的示例）。
+var REASONING_LABEL_MAP = {
+  A: "Cognitive_GoalFocused",
+  B: "Affective_RelationshipFocused",
+  C: "Zhongyong_BalancedAdjustment",
+  D: "Experience_Avoidant"
+};
+
+// 如果某个情境的某个决策点，字母-类型对应关系和上面的默认假设不一样，
+// 可以在这里按 "scenario_id.step_id" 单独覆盖，例如：
+// var STEP_LEVEL_OVERRIDE = { "s3.step2": { A: "Cognitive_GoalFocused", B: "Affective_RelationshipFocused", C: "Experience_Avoidant", D: "Experience_Avoidant" } };
+var STEP_LEVEL_OVERRIDE = {};
+
+function inferReasoningLabel(scenario_id, step_id, letter) {
+  var key = scenario_id + "." + step_id;
+  if (STEP_LEVEL_OVERRIDE[key] && STEP_LEVEL_OVERRIDE[key][letter]) {
+    return STEP_LEVEL_OVERRIDE[key][letter];
+  }
+  return REASONING_LABEL_MAP[letter] || '';
+}
+
+function saveData() {
+  var decisions = jsPsych.data.get().filter({ task: 'sjt_decision' }).values();
+
+  var header = [
+    "subject", "scenario_id", "step_id", "driver_type",
+    "action_display_order", "action_letter", "action_text", "action_rt",
+    "action_switch_count", "action_hover_without_click_count", "action_interaction_log",
+    "reasoning_label_inferred",
+    "time_elapsed"
+  ].join(',') + "\n";
+
+  function csvField(v) {
+    if (v === undefined || v === null) return '';
+    return '"' + String(v).replace(/"/g, '""') + '"';
+  }
+
+  var rows = decisions.map(function (d) {
+    var reasoningLabel = inferReasoningLabel(d.scenario_id, d.step_id, d.chosen_letter);
+    return [
+      subjectID, d.scenario_id, d.step_id, d.driver_type,
+      d.display_order, d.chosen_letter, csvField(d.chosen_text), d.rt,
+      d.switch_count, d.hover_without_click_count, csvField(d.interaction_log),
+      reasoningLabel,
+      d.time_elapsed
+    ].join(',');
+  });
+
+  var csvContent = header + rows.join('\n');
+  var filename = subjectID + "_sjt.csv";
+
+  fetch("https://pipe.jspsych.org/api/data/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "*/*" },
+    body: JSON.stringify({
+      experimentID: DATAPIPE_EXPERIMENT_ID,
+      filename: filename,
+      data: csvContent
+    })
+  })
+  .then(function () {
+    document.body.innerHTML = '<div style="text-align:center;margin-top:100px;font-size:20px;">数据已保存，感谢参与！你现在可以关闭此页面。</div>';
+  })
+  .catch(function (err) {
+    console.error(err);
+    document.body.innerHTML = '<div style="text-align:center;margin-top:100px;font-size:18px;color:#b00;">数据保存时遇到网络问题，请不要关闭页面，并联系研究者。</div>';
+  });
+}
+
+</script>
+</html>

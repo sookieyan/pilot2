@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USYD Cognitive Flexibility</title>
+
+    <!-- ✅ 新增：中文字体支持 -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+    * {
+      font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+  </style>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/jspsych.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/21.0.1/min/jcanvas.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/js/foundation.min.js'></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-html-button-response.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-fullscreen.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych%206.3.1/plugins/jspsych-preload.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-survey-text.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/custom-plugins/jspsych-survey-demographics.js"></script>
+  <link href="css/custom.css" rel="stylesheet" type="text/css">
+  </link>
+  <link href="css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+  <script src="js/flexible-map.js"></script>
+  <script src="js/confidence-rating.js"></script>
+  <link href="https://cogflex.com.au/jspsych/jspsych 6.3.1/jspsych.css" rel="stylesheet" type="text/css" />
+  </link>
+  <link href="css/custom.css" rel="stylesheet" type="text/css" />
+  </link>
+
+  <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            macros: {
+                boldsymbol: ["\\boldsymbol{#1}", 1]
+            }
+        },
+        svg: {
+            fontCache: 'global'
+        },
+        chtml: {
+            scale: 1.2
+        }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <style>
+      .number-option p {
+          margin: 0;
+          padding: 0;
+          display: inline;
+          font-weight: bold;
+      }
+      
+      mjx-container {
+          font-size: 28px !important;
+          display: inline !important;
+          font-weight: bold !important;
+      }
+      
+      mjx-math {
+          font-weight: bold !important;
+      }
+  </style>
+
+  <style>
+    .page {
+      display: none;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    img {
+      max-width: 80%;
+      height: auto;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  
+</body>
+<script>
+
+
+
+  //**********************//
+  // Flexible Mapping
+  //**********************//
+
+  // Experiment Paramaters
+  experimentname = "FlexMap" // Should correspond to the foldername on the cogflex server
+  user = 'kit' // Should correspind to the user on the cogflex server
+  ID = jsPsych.randomization.randomID();
+  PID = jsPsych.data.urlVariables();
+  end_message = "实验已完成。感谢您的参与。请按确定返回Prolific。";
+  eta = 15
+  goal = "rearrange sequences of shapes in your mind."
+
+
+  //**********************//
+  // Trial types
+  //**********************//
+
+  // Fullscreen
+  var full = {
+    type: 'fullscreen',
+    fullscreen_mode: true
+  }
+
+  var preload = {
+    type: 'preload',
+    auto_preload: true,
+    images: function() {
+      var images = [];
+      flex_block.timeline_variables.forEach(function(trial) {
+        trial.stimulus.forEach(function(stim) {
+          images.push(stim);
+        });
+        trial.item.forEach(function(item) {
+          images.push(item);
+        });
+      });
+      images.push('assets/img/single.png');
+      images.push('assets/img/double.png');
+      images.push('assets/img/response-box.png');
+      images.push('assets/img/response-box1.png');
+      return images;
+    },
+    //message: 'Loading experimental images, please wait...',
+    show_progress_bar: true,
+    continue_after_error: true,
+    max_load_time: 30000
+  };
+
+
+
+  var CR_trial = {
+    type: 'conf-rate',
+    stimulus: jsPsych.timelineVariable('stimulus'),
+    item: jsPsych.timelineVariable('item'),
+    stimulus_height: 100,
+    choices: ['cmd+p'],
+    labels: ['Not Confident', 'Confident'],
+    prompt: "How confident are you that you will solve this item?",
+    slider_start: 50,
+    min: 0,
+    max: 100,
+    step: 1,
+    on_finish: function (data) {
+
+    }
+
+  }
+
+
+  var flex_map = {
+    type: 'flex-map',
+    stimulus: jsPsych.timelineVariable('stimulus'),
+    item: jsPsych.timelineVariable('item'),
+    stimulus_height: 100,
+    choices: ['cmd+p'],
+    correct_response: jsPsych.timelineVariable('correct_response'),
+    feedback: true,
+    feedback_message: jsPsych.timelineVariable('feedback'),
+    prompt: '以下哪个选项能够完成这个类比关系？',
+  }
+
+
+
+
+  var flex_block = {
+    timeline: [flex_map],
+    timeline_variables: [
+      { stimulus: ['assets/img/choice_37_1.png', 'assets/img/choice_37_2.png', 'assets/img/choice_37_3.png', 'assets/img/choice_37_4.png'], item: ['assets/img/stim_37_1.png', 'assets/img/stim_37_2.png', 'assets/img/stim_37_3.png'], correct_response: 3, feedback: "这是该类比关系的正确答案，因为 8 乘以 4 等于 32，而 10 乘以 4 等于 40。" },
+      { stimulus: ['assets/img/choice_38_1.png', 'assets/img/choice_38_2.png', 'assets/img/choice_38_3.png', 'assets/img/choice_38_4.png'], item: ['assets/img/stim_38_1.png', 'assets/img/stim_38_2.png', 'assets/img/stim_38_3.png'], correct_response: 4, feedback: "这是该类比关系的正确答案，因为“圆在三角形中”与“三角形在圆中”互为相反关系，因此“矩形在椭圆中”也与“椭圆在矩形中”互为相反关系。" },
+      { stimulus: ['assets/img/choice_39_1CN.png', 'assets/img/choice_39_2CN.png', 'assets/img/choice_39_3CN.png', 'assets/img/choice_39_4CN.png'], item: ['assets/img/stim_39_1CN.png', 'assets/img/stim_39_2CN.png', 'assets/img/stim_39_3CN.png'], correct_response: 2, feedback: "这是该类比关系的正确答案，因为“细小”和“微小”意义相近，就像“高兴”和“开心”也具有相似的含义。" },
+      { stimulus: ['assets/img/choice_40_1.png', 'assets/img/choice_40_2.png', 'assets/img/choice_40_3.png', 'assets/img/choice_40_4.png'], item: ['assets/img/stim_40_1.png', 'assets/img/stim_40_2.png', 'assets/img/stim_40_3.png'], correct_response: 2, feedback: "这是该类比关系的正确答案，因为看起来像四叶草的图形是看起来像单片叶子的图形的4倍。" },
+      { stimulus: ['assets/img/choice_41_1CN.png', 'assets/img/choice_41_2CN.png', 'assets/img/choice_41_3CN.png', 'assets/img/choice_41_4CN.png'], item: ['assets/img/stim_41_1.png', 'assets/img/stim_41_2.png', 'assets/img/stim_41_3CN.png'], correct_response: 2, feedback: "这是该类比关系的正确答案，因为“下降”的反义词是“上升”。" },
+      { stimulus: ['assets/img/choice_42_1.png', 'assets/img/choice_42_2.png', 'assets/img/choice_42_3.png', 'assets/img/choice_42_4.png'], item: ['assets/img/stim_42_1CN.png', 'assets/img/stim_42_2CN.png', 'assets/img/stim_42_3.png'], correct_response: 4, feedback: "这是该类比关系的正确答案，因为'${}^{8}\\!/\\!_{9}$'与'${}^{16}\\!/\\!_{18}$'是等值的（相等的分数）。" },
+      { stimulus: ['assets/img/choice_43_1CN.png', 'assets/img/choice_43_2CN.png', 'assets/img/choice_43_3CN.png', 'assets/img/choice_43_4CN.png'], item: ['assets/img/stim_43_1.png', 'assets/img/stim_43_2.png', 'assets/img/stim_43_3CN.png'], correct_response: 4, feedback: "这是该类比关系的正确答案，因为一头“牛”有4条“腿”。" },
+      { stimulus: ['assets/img/choice_44_1.png', 'assets/img/choice_44_2.png', 'assets/img/choice_44_3.png', 'assets/img/choice_44_4.png'], item: ['assets/img/stim_44_1.png', 'assets/img/stim_44_2.png', 'assets/img/stim_44_3.png'], correct_response: 3, feedback: "这是该类比关系的正确答案，因为'${}^{3}\\!/\\!_{4}$'是'$1{}^{1}\\!/\\!_{3}$'的倒数。" },
+      { stimulus: ['assets/img/choice_45_1.png', 'assets/img/choice_45_2.png', 'assets/img/choice_45_3.png', 'assets/img/choice_45_4.png'], item: ['assets/img/stim_45_1CN.png', 'assets/img/stim_45_2CN.png', 'assets/img/stim_45_3.png'], correct_response: 3, feedback: "这是该类比关系的正确答案，因为这两个图形所包含的方块数量是相等的。" },
+      { stimulus: ['assets/img/choice_46_1.png', 'assets/img/choice_46_2.png', 'assets/img/choice_46_3.png', 'assets/img/choice_46_4.png'], item: ['assets/img/stim_46_1.png', 'assets/img/stim_46_2.png', 'assets/img/stim_46_3.png'], correct_response: 1, feedback: "这是该类比关系的正确答案，因为18和31之间的差值与2和15之间的差值是相同的。" },
+      { stimulus: ['assets/img/choice_47_1.png', 'assets/img/choice_47_2.png', 'assets/img/choice_47_3.png', 'assets/img/choice_47_4.png'], item: ['assets/img/stim_47_1.png', 'assets/img/stim_47_2.png', 'assets/img/stim_47_3.png'], correct_response: 1, feedback: "这是该类比关系的正确答案，因为它代表了原始图像的下半部分。" },
+      { stimulus: ['assets/img/choice_48_1CN.png', 'assets/img/choice_48_2CN.png', 'assets/img/choice_48_3CN.png', 'assets/img/choice_48_4CN.png'], item: ['assets/img/stim_48_1CN.png', 'assets/img/stim_48_2CN.png', 'assets/img/stim_48_3CN.png'], correct_response: 3, feedback: "这是该类比关系的正确答案，因为“马驹”是“马”的更小或幼年版本。" },
+      { stimulus: ['assets/img/choice_49_1.png', 'assets/img/choice_49_2.png', 'assets/img/choice_49_3.png', 'assets/img/choice_49_4.png'], item: ['assets/img/stim_49_1.png', 'assets/img/stim_49_2.png', 'assets/img/stim_49_3.png'], correct_response: 3, feedback: "这是该类比关系的正确答案，因为该图像以钟表指针的方式再现了2与15之间的差异。" },
+      { stimulus: ['assets/img/choice_50_1CN.png', 'assets/img/choice_50_2CN.png', 'assets/img/choice_50_3CN.png', 'assets/img/choice_50_4CN.png'], item: ['assets/img/stim_50_1.png', 'assets/img/stim_50_2.png', 'assets/img/stim_50_3CN.png'], correct_response: 1, feedback: "这是该类比关系的正确答案，因为“轮子”构成了“三轮车”的下半部分。" },
+      { stimulus: ['assets/img/choice_51_1.png', 'assets/img/choice_51_2.png', 'assets/img/choice_51_3.png', 'assets/img/choice_51_4.png'], item: ['assets/img/stim_51_1CN.png', 'assets/img/stim_51_2CN.png', 'assets/img/stim_51_3.png'], correct_response: 4, feedback: "这是该类比关系的正确答案，因为22小于36。" },
+      { stimulus: ['assets/img/choice_52_1CN.png', 'assets/img/choice_52_2CN.png', 'assets/img/choice_52_3CN.png', 'assets/img/choice_52_4CN.png'], item: ['assets/img/stim_52_1.png', 'assets/img/stim_52_2.png', 'assets/img/stim_52_3CN.png'], correct_response: 2, feedback: "这是该类比关系的正确答案，因为“学步的孩子”与“青少年”之间的年龄差，与2和15之间的差值是相似的。" },
+      { stimulus: ['assets/img/choice_53_1.png', 'assets/img/choice_53_2.png', 'assets/img/choice_53_3.png', 'assets/img/choice_53_4.png'], item: ['assets/img/stim_53_1.png', 'assets/img/stim_53_2.png', 'assets/img/stim_53_3.png'], correct_response: 2, feedback: "是该类比关系的正确答案，因为该图像是星形图像的缩小版本。" },
+      { stimulus: ['assets/img/choice_54_1.png', 'assets/img/choice_54_2.png', 'assets/img/choice_54_3.png', 'assets/img/choice_54_4.png'], item: ['assets/img/stim_54_1.png', 'assets/img/stim_54_2.png', 'assets/img/stim_54_3.png'], correct_response: 3, feedback: "这是该类比关系的正确答案，因为'8' 表示数学表达式 $\\frac{\\sqrt[2]{64}}{8}$的下半部分。" },
+
+
+
+      // { stimulus: ['assets/img/choice_2_1.png', 'assets/img/choice_2_2.png', 'assets/img/choice_2_3.png', 'assets/img/choice_2_4.png'], item: ['assets/img/stim_2_1.png', 'assets/img/stim_2_2.png', 'assets/img/stim_2_3.png'], correct_response: 3, feedback: "This is the correct answer, because as all three words are related to food or eating."  },
+      // { stimulus: ['assets/img/choice_3_1.png', 'assets/img/choice_3_2.png', 'assets/img/choice_3_3.png', 'assets/img/choice_3_4.png'], item: ['assets/img/stim_3_1.png', 'assets/img/stim_3_2.png', 'assets/img/stim_3_3.png'], correct_response: 2, feedback: "This is the correct answer, because as all three words are related to food or eating."   },
+      // { stimulus: ['assets/img/choice_4_1.png', 'assets/img/choice_4_2.png', 'assets/img/choice_4_3.png', 'assets/img/choice_4_4.png'], item: ['assets/img/stim_4_1.png', 'assets/img/stim_4_2.png', 'assets/img/stim_4_3.png'] },
+      // { stimulus: ['assets/img/choice_5_1.png', 'assets/img/choice_5_2.png', 'assets/img/choice_5_3.png', 'assets/img/choice_5_4.png'], item: ['assets/img/stim_5_1.png', 'assets/img/stim_5_2.png', 'assets/img/stim_5_3.png'] },
+      // { stimulus: ['assets/img/choice_6_1.png', 'assets/img/choice_6_2.png', 'assets/img/choice_6_3.png', 'assets/img/choice_6_4.png'], item: ['assets/img/stim_6_1.png', 'assets/img/stim_6_2.png', 'assets/img/stim_6_3.png'] },
+      // { stimulus: ['assets/img/choice_7_1.png', 'assets/img/choice_7_2.png', 'assets/img/choice_7_3.png', 'assets/img/choice_7_4.png'], item: ['assets/img/stim_7_1.png', 'assets/img/stim_7_2.png', 'assets/img/stim_7_3.png'] },
+      // { stimulus: ['assets/img/choice_8_1.png', 'assets/img/choice_8_2.png', 'assets/img/choice_8_3.png', 'assets/img/choice_8_4.png'], item: ['assets/img/stim_8_1.png', 'assets/img/stim_8_2.png', 'assets/img/stim_8_3.png'] },
+      // { stimulus: ['assets/img/choice_9_1.png', 'assets/img/choice_9_2.png', 'assets/img/choice_9_3.png', 'assets/img/choice_9_4.png'], item: ['assets/img/stim_9_1.png', 'assets/img/stim_9_2.png', 'assets/img/stim_9_3.png'] },
+      // { stimulus: ['assets/img/choice_10_1.png', 'assets/img/choice_10_2.png', 'assets/img/choice_10_3.png', 'assets/img/choice_10_4.png'], item: ['assets/img/stim_10_1.png', 'assets/img/stim_10_2.png', 'assets/img/stim_10_3.png'] },
+      // { stimulus: ['assets/img/choice_11_1.png', 'assets/img/choice_11_2.png', 'assets/img/choice_11_3.png', 'assets/img/choice_11_4.png'], item: ['assets/img/stim_11_1.png', 'assets/img/stim_11_2.png', 'assets/img/stim_11_3.png'] },
+      // { stimulus: ['assets/img/choice_12_1.png', 'assets/img/choice_12_2.png', 'assets/img/choice_12_3.png', 'assets/img/choice_12_4.png'], item: ['assets/img/stim_12_1.png', 'assets/img/stim_12_2.png', 'assets/img/stim_12_3.png'] },
+      // { stimulus: ['assets/img/choice_13_1.png', 'assets/img/choice_13_2.png', 'assets/img/choice_13_3.png', 'assets/img/choice_13_4.png'], item: ['assets/img/stim_13_1.png', 'assets/img/stim_13_2.png', 'assets/img/stim_13_3.png'] },
+      // { stimulus: ['assets/img/choice_14_1.png', 'assets/img/choice_14_2.png', 'assets/img/choice_14_3.png', 'assets/img/choice_14_4.png'], item: ['assets/img/stim_14_1.png', 'assets/img/stim_14_2.png', 'assets/img/stim_14_3.png'] },
+      // { stimulus: ['assets/img/choice_15_1.png', 'assets/img/choice_15_2.png', 'assets/img/choice_15_3.png', 'assets/img/choice_15_4.png'], item: ['assets/img/stim_15_1.png', 'assets/img/stim_15_2.png', 'assets/img/stim_15_3.png'] },
+      // { stimulus: ['assets/img/choice_16_1.png', 'assets/img/choice_16_2.png', 'assets/img/choice_16_3.png', 'assets/img/choice_16_4.png'], item: ['assets/img/stim_16_1.png', 'assets/img/stim_16_2.png', 'assets/img/stim_16_3.png'] },
+      // { stimulus: ['assets/img/choice_17_1.png', 'assets/img/choice_17_2.png', 'assets/img/choice_17_3.png', 'assets/img/choice_17_4.png'], item: ['assets/img/stim_17_1.png', 'assets/img/stim_17_2.png', 'assets/img/stim_17_3.png'] },
+      // { stimulus: ['assets/img/choice_18_1.png', 'assets/img/choice_18_2.png', 'assets/img/choice_18_3.png', 'assets/img/choice_18_4.png'], item: ['assets/img/stim_18_1.png', 'assets/img/stim_18_2.png', 'assets/img/stim_18_3.png'] },
+      // { stimulus: ['assets/img/choice_19_1.png', 'assets/img/choice_19_2.png', 'assets/img/choice_19_3.png', 'assets/img/choice_19_4.png'], item: ['assets/img/stim_19_1.png', 'assets/img/stim_19_2.png', 'assets/img/stim_19_3.png'] },
+      // { stimulus: ['assets/img/choice_20_1.png', 'assets/img/choice_20_2.png', 'assets/img/choice_20_3.png', 'assets/img/choice_20_4.png'], item: ['assets/img/stim_20_1.png', 'assets/img/stim_20_2.png', 'assets/img/stim_20_3.png'] },
+      // { stimulus: ['assets/img/choice_21_1.png', 'assets/img/choice_21_2.png', 'assets/img/choice_21_3.png', 'assets/img/choice_21_4.png'], item: ['assets/img/stim_21_1.png', 'assets/img/stim_21_2.png', 'assets/img/stim_21_3.png'] },
+      // { stimulus: ['assets/img/choice_22_1.png', 'assets/img/choice_22_2.png', 'assets/img/choice_22_3.png', 'assets/img/choice_22_4.png'], item: ['assets/img/stim_22_1.png', 'assets/img/stim_22_2.png', 'assets/img/stim_22_3.png'] },
+      // { stimulus: ['assets/img/choice_23_1.png', 'assets/img/choice_23_2.png', 'assets/img/choice_23_3.png', 'assets/img/choice_23_4.png'], item: ['assets/img/stim_23_1.png', 'assets/img/stim_23_2.png', 'assets/img/stim_23_3.png'] },
+      // { stimulus: ['assets/img/choice_24_1.png', 'assets/img/choice_24_2.png', 'assets/img/choice_24_3.png', 'assets/img/choice_24_4.png'], item: ['assets/img/stim_24_1.png', 'assets/img/stim_24_2.png', 'assets/img/stim_24_3.png'] },
+      // { stimulus: ['assets/img/choice_25_1.png', 'assets/img/choice_25_2.png', 'assets/img/choice_25_3.png', 'assets/img/choice_25_4.png'], item: ['assets/img/stim_25_1.png', 'assets/img/stim_25_2.png', 'assets/img/stim_25_3.png'] },
+      // { stimulus: ['assets/img/choice_26_1.png', 'assets/img/choice_26_2.png', 'assets/img/choice_26_3.png', 'assets/img/choice_26_4.png'], item: ['assets/img/stim_26_1.png', 'assets/img/stim_26_2.png', 'assets/img/stim_26_3.png'] },
+      // { stimulus: ['assets/img/choice_27_1.png', 'assets/img/choice_27_2.png', 'assets/img/choice_27_3.png', 'assets/img/choice_27_4.png'], item: ['assets/img/stim_27_1.png', 'assets/img/stim_27_2.png', 'assets/img/stim_27_3.png'] },
+      // { stimulus: ['assets/img/choice_28_1.png', 'assets/img/choice_28_2.png', 'assets/img/choice_28_3.png', 'assets/img/choice_28_4.png'], item: ['assets/img/stim_28_1.png', 'assets/img/stim_28_2.png', 'assets/img/stim_28_3.png'] },
+      // { stimulus: ['assets/img/choice_29_1.png', 'assets/img/choice_29_2.png', 'assets/img/choice_29_3.png', 'assets/img/choice_29_4.png'], item: ['assets/img/stim_29_1.png', 'assets/img/stim_29_2.png', 'assets/img/stim_29_3.png'] },
+      // { stimulus: ['assets/img/choice_30_1.png', 'assets/img/choice_30_2.png', 'assets/img/choice_30_3.png', 'assets/img/choice_30_4.png'], item: ['assets/img/stim_30_1.png', 'assets/img/stim_30_2.png', 'assets/img/stim_30_3.png'] },
+      // { stimulus: ['assets/img/choice_31_1.png', 'assets/img/choice_31_2.png', 'assets/img/choice_31_3.png', 'assets/img/choice_31_4.png'], item: ['assets/img/stim_31_1.png', 'assets/img/stim_31_2.png', 'assets/img/stim_31_3.png'] },
+      // { stimulus: ['assets/img/choice_32_1.png', 'assets/img/choice_32_2.png', 'assets/img/choice_32_3.png', 'assets/img/choice_32_4.png'], item: ['assets/img/stim_32_1.png', 'assets/img/stim_32_2.png', 'assets/img/stim_32_3.png'] },
+      // { stimulus: ['assets/img/choice_33_1.png', 'assets/img/choice_33_2.png', 'assets/img/choice_33_3.png', 'assets/img/choice_33_4.png'], item: ['assets/img/stim_33_1.png', 'assets/img/stim_33_2.png', 'assets/img/stim_33_3.png'] },
+      // { stimulus: ['assets/img/choice_34_1.png', 'assets/img/choice_34_2.png', 'assets/img/choice_34_3.png', 'assets/img/choice_34_4.png'], item: ['assets/img/stim_34_1.png', 'assets/img/stim_34_2.png', 'assets/img/stim_34_3.png'] },
+      // { stimulus: ['assets/img/choice_35_1.png', 'assets/img/choice_35_2.png', 'assets/img/choice_35_3.png', 'assets/img/choice_35_4.png'], item: ['assets/img/stim_35_1.png', 'assets/img/stim_35_2.png', 'assets/img/stim_35_3.png'] },
+      // { stimulus: ['assets/img/choice_36_1.png', 'assets/img/choice_36_2.png', 'assets/img/choice_36_3.png', 'assets/img/choice_36_4.png'], item: ['assets/img/stim_36_1.png', 'assets/img/stim_36_2.png', 'assets/img/stim_36_3.png'] }
+    ]
+  }
+
+
+  //**********************//
+  // Experiment
+  //**********************//
+
+  function startExperiment() {
+
+    var timeline = [
+      preload,
+      flex_block
+    ];
+
+    jsPsych.init({
+      timeline: timeline,//[flex_block],//
+      on_timeline_start: function () {
+        trialnum = 1
+      },
+      on_finish: function (data) {
+        console.log("on_finish");
+        var trials = jsPsych.data.get().filter({trial_type: 'flex-map'}).values();
+
+        var formattedData = [];
+        for (var i = 0; i < trials.length; i++) {
+          var trial = trials[i];
+          formattedData.push({
+            subject: trial.subject,
+            IP: trial.IP,
+            start_time: trial.start_time,
+            stimulus: trial.stimulus,
+            response: trial.response,
+            response_time: trial.response_time,
+            inspection_time: trial.inspection_time,
+            correct: trial.correct
+          });
+        }
+
+        saveData(formattedData);
+
+        // move to saveData function
+        // if (window.parent && window.parent !== window) {
+        //   window.parent.location.href = 'end.html';
+        // } else {
+        //   window.location.href = 'end.html';
+        // }
+      }
+    });
+  }
+
+
+
+
+
+  //**********************//
+  // SAVING
+  //**********************//
+
+  // Add properties
+  //jsPsych.data.addProperties({ ID: ID });
+
+  // Save
+  function saveData(data) {
+    console.log("saveData");
+    let csvContent = "subject,IP,start_time,stimulus,response,response_time,inspection_time,correct\n";
+
+    for (let i = 0; i < data.length; i++) {
+      const row = [
+        data[i].subject,
+        data[i].IP,
+        data[i].start_time,
+        data[i].stimulus,
+        data[i].response,
+        data[i].response_time,
+        data[i].inspection_time,
+        data[i].correct
+      ].join(',');
+      csvContent += row + "\n";
+    }
+
+    const timestamp = new Date().getTime();
+    const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replace(/:/g, '_');
+    const filename = timestamp + "_" + date + ".csv";
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "./scripts/save_file.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+
+
+
+        if (window.parent && window.parent !== window) {
+          window.parent.location.href = 'end.html';
+        } else {
+          window.location.href = 'end.html';
+        }
+      }
+    };
+    console.log(filename);
+    console.log(csvContent);
+    xhr.send(JSON.stringify({
+      filename: filename,
+      filedata: csvContent
+    }));
+  }
+
+  window.onload = function () {
+    startExperiment();
+  };
+
+
+</script>
+
+</html>

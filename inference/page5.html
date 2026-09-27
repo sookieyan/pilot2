@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USYD Cognitive Flexibility</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="prefetch" href="exp-demo.html">
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>灵活推理任务(5)</h1>
+
+        <div class="text-container">
+            <div id="text1" class="text-content">
+                <p>在开始之前，请阅读以下补充说明：</p>
+                <ul style="font-family: 'Aptos', sans-serif; font-size: 24px; text-align: left; max-width: 80%; line-height: 1.5; margin: 0 auto; margin-left: 10%;">
+                    <li>本任务中的分类题中，一些可能包含 <b>文字</b>，一些可能包含 <b>数字</b>， 还有一些可能包含 <b>图形</b>。</li>
+                    <li>你的任务是根据推断<b>左侧</b> 呈现的文字、数字或图形与 <b>右侧选项之间</b>的<b>共同特征或规律</b>，选择右侧<b>最符合</b>该规律的一组。.</li>
+                    <li>请注意：即使左侧的元素保持不变，你需要寻找的 <b>分类规则</b> 也可能 <b>发生变化</b>。有些规则较为明显，但也一些则需要你跳出固有思维（“打破常规”）。</li>
+                    <li>当你认为某一组与左侧元素匹配时，请 <b>点击</b> 该组以进入下一个题目。</li>
+                </ul>
+                <p>本任务共有<b>18个分类题</b>， 预计完成时间不超过10分钟。请确保答案的<b>准确性</b>，同时尽量<b>快速</b>作答。</p>
+            </div>
+        </div>
+
+
+        <div class="footer-bar">
+            <div class="left-button">
+                <button id="backBtn" class="confirm-button">&lt; 返回 &gt;</button>
+            </div>
+            <div class="right-button">
+                <a href="exp-demo.html" id="continueBtn" class="continue-button" style="display: block;"><b>点击</b> &lt; 继续 &gt; 开始任务</a>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const continueBtn = document.getElementById('continueBtn');
+            const backBtn = document.getElementById('backBtn');
+
+            continueBtn.style.display = 'block';
+            backBtn.addEventListener('click', function() {
+                window.location.href = 'page4.html';
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USYD Cognitive Flexibility</title>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/jspsych.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/21.0.1/min/jcanvas.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/js/foundation.min.js'></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-preload.js"></script>
+  <script src="js/flexible-inference.js"></script>
+  <script src="Editable-Parameters.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-html-button-response.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-fullscreen.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych%206.3.1/plugins/jspsych-preload.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/plugins/jspsych-survey-text.js"></script>
+  <script src="https://cogflex.com.au/jspsych/jspsych 6.3.1/custom-plugins/jspsych-survey-demographics.js"></script>
+  <link href="css/custom.css" rel="stylesheet" type="text/css">
+  </link>
+  <link href="css/jspsych.css" rel="stylesheet" type="text/css">
+  </link>
+  <style>
+    /* ✅ @import 必须在最顶部 */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+
+    @font-face {
+      font-family: 'Aptos';
+      src: url('assets/fonts/Aptos-Mono-Bold.ttf') format('truetype');
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Aptos';
+      src: url('assets/fonts/Aptos-Mono.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+
+  /* ✅ 新增：让所有元素在 Aptos 无法显示中文时，自动用 Noto Sans SC */
+  * {
+    font-family: 'Aptos', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+</style>
+</head>
+
+<body>
+</body>
+<script>
+
+  //**********************//
+  // CPS Demo
+  //**********************//
+
+
+  // Experiment Paramaters
+  experimentname = "FI" // Should correspond to the foldername on the cogflex server
+  user = 'kit' // Should correspind to the user on the cogflex server
+  ID = jsPsych.randomization.randomID();
+
+  //**********************//
+  // Trial types
+  //**********************//
+
+  // Fullscreen
+  var full = {
+    type: 'fullscreen',
+    fullscreen_mode: true
+  }
+
+
+
+
+  let currentPage = 1;
+
+  // function showNextPage() {
+  //   document.getElementById(`page${currentPage}`).classList.remove('active');
+  //   currentPage++;
+  //   if (document.getElementById(`page${currentPage}`)) {
+  //     document.getElementById(`page${currentPage}`).classList.add('active');
+  //   }
+  // }
+
+
+
+  //**********************//
+  // Experiment
+  //**********************//
+  function startExperiment() {
+
+    jsPsych.init({
+      timeline: [preload, test_block],
+      on_timeline_start: function () {
+        trialnum = 1
+      },
+      on_finish: function () {
+        var trials = jsPsych.data.get().filter({trial_type: 'flexible-inference'}).values();
+
+        var formattedData = [];
+        for (var i = 0; i < trials.length; i++) {
+          var trial = trials[i];
+          formattedData.push({
+            subject: trial.subject,
+            IP: trial.IP,
+            start_time: trial.start_time,
+            stimulus: trial.stimulus,
+            response: trial.response,
+            response_time: trial.response_time,
+            inspection_time: trial.inspection_time,
+            correct: trial.correct
+          });
+        }
+
+        saveData(formattedData);
+        // alert(end_message);
+        // goHome();
+        
+      }
+    });
+
+  }
+
+
+  //**********************//
+  // SAVING
+  //**********************//
+  function saveData(data) {
+    let csvContent = "subject,IP,start_time,stimulus,response,response_time,inspection_time,correct\n";
+
+    for (let i = 0; i < data.length; i++) {
+      const row = [
+        data[i].subject,
+        data[i].IP,
+        data[i].start_time,
+        data[i].stimulus,
+        data[i].response,
+        data[i].response_time,
+        data[i].inspection_time,
+        data[i].correct
+      ].join(',');
+      csvContent += row + "\n";
+    }
+
+    const timestamp = new Date().getTime();
+    const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replace(/:/g, '_');
+    const filename = timestamp + "_" + date + ".csv";
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "./scripts/save_file.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+
+
+
+        if (window.parent && window.parent !== window) {
+          window.parent.location.href = 'end.html';
+        } else {
+          window.location.href = 'end.html';
+        }
+      }
+    };
+
+    xhr.send(JSON.stringify({
+      filename: filename,
+      filedata: csvContent
+    }));
+  }
+  // function saveData(data) {
+  //   // Save
+  //   function saveData(data) {
+  //     const dataWithID = {
+  //       ID: ID,
+  //       data: data,
+  //     };
+
+  //     const fileData = JSON.stringify(dataWithID);
+
+  //     $.ajax({
+  //       type: 'post',
+  //       url: './scripts/save_file.php', // this is the path to the above PHP script
+  //       data: fileData,
+  //       contentType: 'application/json',
+  //       success: function(response) {
+  //         console.log('Data saved successfully:', response);
+  //       },
+  //       error: function(xhr, status, error) {
+  //         console.error('Failed to save data:', status, error);
+  //       }
+  //     });
+  //   }
+
+  // }
+  window.onload = function () {
+    startExperiment();
+  };
+</script>
+
+
+</html>

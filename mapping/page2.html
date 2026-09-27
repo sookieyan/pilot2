@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Flexible Mapping Task</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="prefetch" href="page3.html">
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>灵活映射任务(2)</h1>
+
+        <div id="step1" class="step-content active">
+            <p>这个题目与刚才的例子稍有不同。</p>
+            <div class="analogy-container">
+                <strong style="font-size: 40px;">HOT : COLD :: <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-large" style="vertical-align: middle;"> : ？</strong>
+            </div>
+        </div>
+
+        <div id="step2" class="step-content">
+            <p>这个题目与刚才的例子稍有不同。</p>
+            <div class="analogy-container">
+                <strong style="font-size: 40px;">热 : 冷 :: <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-large" style="vertical-align: middle;"> : ？</strong>
+            </div>
+            <p>和前一个例子一样，这个问题可以理解为：<strong>热</strong> 与 <strong>冷</strong> 的关系，就像 <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-medium" style="vertical-align: middle;"> 与 <strong>什么</strong>的关系？</p>
+            
+        </div>
+
+        <div id="step3" class="step-content">
+            <p>这个题目与刚才的例子稍有不同。</p>
+            <div class="analogy-container">
+                <strong style="font-size: 40px;">热 : 冷 :: <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-large" style="vertical-align: middle;"> : ？</strong>
+            </div>
+            <p>和前一个例子一样，这个问题可以理解为：<strong>热</strong> 与 <strong>冷</strong> 的关系，就像 <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-medium" style="vertical-align: middle;"> 与 <strong>什么</strong>的关系？</p>
+            <p>这意味着，你需要将前两个词（热和冷）之间的“规则”应用到图形上。哪个选项可以完成这个类比？</p>
+            
+            <div class="options-container">
+                <img src="assets/images/2.png" alt="Circle with square" class="shape-option">
+                <img src="assets/images/3.png" alt="Triangle" class="shape-option">
+                <img src="assets/images/4.png" alt="Square" class="shape-option">
+                <img src="assets/images/5.png" alt="Circle" class="shape-option">
+            </div>
+        </div>
+
+        <div id="step4" class="step-content">
+            <p>这个题目与刚才的例子稍有不同。</p>
+            <div class="analogy-container">
+                <strong style="font-size: 40px;">热 : 冷 :: <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-large" style="vertical-align: middle;"> : ？</strong>
+            </div>
+            <p>A和前一个例子一样，这个问题可以理解为： <strong>热</strong> 与 <strong>冷</strong> 的关系，就像 <img src="assets/images/1.png" alt="Square with circle" class="inline-shape-medium" style="vertical-align: middle;"> 与 <strong>什么</strong>的关系？</p>
+            <p>这意味着，你需要将前两个词（热和冷）之间的“规则”应用到图形上。哪个选项可以完成这个类比？</p>
+            
+            <div class="options-container">
+                <img src="assets/images/2.png" alt="Circle with square" class="shape-option selected" id="correctAnswer">
+                <img src="assets/images/3.png" alt="Triangle" class="shape-option">
+                <img src="assets/images/4.png" alt="Square" class="shape-option">
+                <img src="assets/images/5.png" alt="Circle" class="shape-option">
+            </div>
+            
+            <p>第一个选项是“方形中有圆形”这一图形的相反形式，因此它是本题的正确答案。</p>
+        </div>
+    </div>
+
+
+    <div class="footer-bar">
+        <div class="footer-left">
+            <button id="confirmBtn" class="confirm-button">&lt; 请点击鼠标左键继续 &gt;</button>
+            <button id="backBtn" class="confirm-button" style="display: none;">&lt; 返回 &gt;</button>
+        </div>
+        <div class="footer-center" id="footerCenter">
+            <div class="click-instruction" style="display: none;">
+                <p>请<strong>点击</strong> 这个答案选项来完成这个类比并继续下一步。</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const confirmBtn = document.getElementById('confirmBtn');
+        const correctAnswer = document.getElementById('correctAnswer');
+        const clickInstruction = document.querySelector('.click-instruction');
+        const backBtn = document.getElementById('backBtn');
+
+        function handlePageClick() {
+            if (confirmBtn.style.display !== 'none') {
+                confirmBtn.click();
+            }
+        }
+
+        document.addEventListener('click', handlePageClick);
+
+        function handleConfirmClick() {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                
+                if (currentStep === totalSteps) {
+                    confirmBtn.style.display = 'none';
+                    clickInstruction.style.display = 'block';
+                    backBtn.style.display = 'block';
+                }
+            }
+        }
+
+        confirmBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            handleConfirmClick();
+        });
+
+        correctAnswer.addEventListener('click', function () {
+            window.location.href = 'page3.html';
+        });
+
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'page1.html';
+        });
+    </script>
+</body>
+
+</html>

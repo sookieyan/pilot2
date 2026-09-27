@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USYD Cognitive Flexibility</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="prefetch" href="page3.html">
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>灵活推理任务(2)</h1>
+
+
+        <div class="text-container">
+
+            <div id="text1" class="text-content">
+                <p>这是一个使用文字的示例。<br>
+                    在左侧，你可以看到词语 绿色。</p>
+            </div>
+
+            <div id="text2" class="text-content" style="display: none;">
+                <p>这是一个使用文字的示例。<br>
+                    在左侧，你可以看到词语 绿色。<br>
+                    在右侧，你可以看到四组词语。</p>
+            </div>
+
+
+            <div id="text3" class="text-content" style="display: none;">
+                <p>这是一个使用文字的示例。<br>
+                    在左侧，你可以看到词语 绿色。<br>
+                    在右侧，你可以看到四组词语。</p>
+            </div>
+
+            <div id="text4" class="text-content" style="display: none;">
+                <p>这是一个使用文字的示例。<br>
+                    在左侧，你可以看到词语 绿色。<br>
+                    在右侧，你可以看到四组词语。</p>
+            </div>
+        </div>
+
+
+        <div class="word-container">
+            <div class="word-box-left">绿色</div>
+            <div class="word-box-right-container">
+
+                <div id="boxes1"
+                    style="display: grid; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right"></div>
+                    <div class="word-box-right"></div>
+                    <div class="word-box-right"></div>
+                    <div class="word-box-right"></div>
+                </div>
+
+
+                <div id="boxes2"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right">贪婪的<br>冰球</div>
+                    <div class="word-box-right">蓝色<br>紫罗兰色</div>
+                    <div class="word-box-right">氯气<br>信念</div>
+                    <div class="word-box-right">福禄<br>保密</div>
+                </div>
+
+
+                <div id="boxes3"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right">贪婪的<br>冰球</div>
+                    <div id="correctPair" class="word-box-right">蓝色<br>紫罗兰色</div>
+                    <div class="word-box-right">氯气<br>信念</div>
+                    <div class="word-box-right">福禄<br>保密</div>
+                </div>
+
+
+                <div id="boxes4"
+                    style="display: none; grid-template-columns: repeat(2, 150px); grid-template-rows: repeat(2, 150px); gap: 20px;">
+                    <div class="word-box-right">贪婪的<br>冰球</div>
+                    <div id="correctPair" class="word-box-right selected">蓝色<br>紫罗兰色</div>
+                    <div class="word-box-right">氯气<br>信念</div>
+                    <div class="word-box-right">福禄<br>保密</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="bottom-text-container">
+
+            <div id="bottom1" class="bottom-text-content"></div>
+            <div id="bottom2" class="bottom-text-content" style="display: none;"></div>
+
+
+            <div id="bottom3" class="bottom-text-content" style="display: none;">
+                <p>你的任务是在右侧四个选项中 <b>找到一组词语</b>与左侧词语最为 <b>匹配</b> 。 寻找这些词语之间可能存在的共同点将有助于你解答题目。是哪一组呢？</p>
+            </div>
+
+
+            <div id="bottom4" class="bottom-text-content" style="display: none;">
+                <p>你的任务是在右侧四个选项中 <b>找到一组词语</b> 与左侧词语最为 <b>匹配</b> 。寻找这些词语之间可能存在的共同点将有助于你解答题目。是哪一组呢？</p>
+                <p>      绿色是一种颜色，蓝色和紫罗兰色也是颜色。因此，<b>右上角</b> 的那组是正确答案。</p>
+            </div>
+        </div>
+
+
+        <div class="footer-bar">
+            <div class="left-button">
+                <button id="confirmBtn" class="confirm-button">&lt; 请点击鼠标左键继续 &gt;</button>
+                <button id="backBtn" class="confirm-button" style="display: none;">&lt; 返回 &gt;</button>
+            </div>
+            <div class="center-button">
+                <div class="click-instruction"><b>点击</b>这组词来解决此分类问题并继续。</div>
+            </div>
+            <div class="right-button">
+                <a href="page3.html" id="continueBtn" class="continue-button"><b>点击</b> 此处 &lt; 继续 &gt;</a>
+            </div>
+        </div>
+
+
+
+        <script>
+            let currentStep = 1;
+            const confirmBtn = document.getElementById('confirmBtn');
+            const continueBtn = document.getElementById('continueBtn');
+            const backBtn = document.getElementById('backBtn');
+            let correctPair = document.getElementById('correctPair');
+            const clickInstruction = document.querySelector('.click-instruction');
+        
+            function showStep(step) {
+                for (let i = 1; i <= 4; i++) {
+                    document.getElementById(`text${i}`).style.display = 'none';
+                    document.getElementById(`boxes${i}`).style.display = 'none';
+                    document.getElementById(`bottom${i}`).style.display = 'none';
+                }
+        
+                document.getElementById(`text${step}`).style.display = 'block';
+                document.getElementById(`boxes${step}`).style.display = 'grid';
+                document.getElementById(`bottom${step}`).style.display = 'block';
+                
+                if (correctPair) {
+                    correctPair.removeEventListener('click', handleCorrectPairClick);
+                }
+                correctPair = document.querySelector(`#boxes${step} #correctPair`);
+                if (correctPair) {
+                    correctPair.style.cursor = 'pointer';
+                    correctPair.addEventListener('click', handleCorrectPairClick);
+                }
+
+                if (step === 4) {
+                    clickInstruction.style.display = 'block';
+                    confirmBtn.style.display = 'none';
+                    backBtn.style.display = 'block';
+                } else {
+                    clickInstruction.style.display = 'none';
+                    confirmBtn.style.display = 'block';
+                    backBtn.style.display = 'none';
+                }
+            }
+            
+            function handlePageClick() {
+                if (currentStep < 3) {
+                    currentStep++;
+                    showStep(currentStep);
+                }else if(currentStep === 3) {
+                    confirmBtn.style.display = 'none';
+                    backBtn.style.display = 'block';
+                    correctPair.style.cursor = 'pointer';
+                    currentStep = 4;
+                    showStep(4);
+                }
+            }
+
+            document.addEventListener('click', handlePageClick);
+            
+            function handleCorrectPairClick(e) {
+                if(currentStep === 4) {
+                    window.location.href = 'page3.html';
+                }
+            }
+
+            backBtn.addEventListener('click', function() {
+                window.location.href = 'page1.html';
+            });
+
+            showStep(1);
+        </script>
+</body>
+
+</html>

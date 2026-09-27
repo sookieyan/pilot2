@@ -1,0 +1,1170 @@
+#jspsych-flexible-inference-btngroup{
+  margin-top: 80%;
+}
+
+.flexible-inference-btn{
+  display: none;
+width: 90px;
+height: 90px;
+border-style: double;
+background-color: white;
+
+}
+
+.flexible-inference-btn:active {
+  background: #e5e5e5;
+  -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+          box-shadow: inset 0px 0px 5px #c1c1c1;
+   outline: none;
+}
+
+.square {
+    width: 7%;
+    height: 10%;
+    background-color: white;
+    border-style: solid;
+    borderColor: black;
+    position: absolute;
+  }
+
+
+#feedback-message{
+  visibility: hidden;
+}
+  #next-button{
+    visibility: hidden;
+  }
+
+  #x1{
+    border-right-style: none;
+  }
+
+#x2{
+  border-left-style: none;
+}
+
+#x3{
+  border-right-style: none;
+}
+
+#x4{
+border-left-style: none;
+}
+
+
+#y1{
+  border-right-style: none;
+}
+
+#y2{
+border-left-style: none;
+}
+
+#y3{
+border-right-style: none;
+}
+
+#y4{
+border-left-style: none;
+}
+
+.animation-base {
+  width: 9%;
+  height: 9%;
+  object-fit: contain;
+  background-color: transparent;
+  border-color: black;
+  position: absolute;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+  .y5_y5 {
+    animation-name: y5_y5;
+  }
+  @keyframes y5_y5 {
+    0%   {left:54%; top:36%;}
+  100%   {left:54%; top:36%;}
+  }
+
+  .y6_y6 {
+    animation-name: y6_y6;
+  }
+  @keyframes y6_y6 {
+    0%   {left:60%; top:36%;}
+  100%   {left:60%; top:36%;}
+  }
+
+  .x5_x5 {
+    animation-name: x5_x5;
+  }
+  @keyframes x5_x5 {
+    0%   {left:35%; top:36%;}
+  100%   {left:35%; top:36%;}
+  }
+
+  .x6_x6 {
+    animation-name: x6_x6;
+  }
+  @keyframes x6_x6 {
+    0%   {left:41%; top:36%;}
+  100%   {left:41%; top:36%;}
+  }
+
+  .y1_x1 {
+    animation-name: y1_x1;
+  }
+  @keyframes y1_x1 {
+    0%   {left:71%; top:26%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .y1_x2 {
+    animation-name: y1_x2;
+  }
+  @keyframes y1_x2 {
+    0%   {left:71%; top:26%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .y1_x3 {
+    animation-name: y1_x3;
+  }
+  @keyframes y1_x3 {
+    0%   {left:71%; top:26%;}
+  100%  {left:56%; top:51%;}
+  }
+
+  .y1_x4 {
+    animation-name: y1_x4;
+  }
+  @keyframes y1_x4 {
+    0%   {left:54%; top:42%;}
+  100%  {left:41%; top:54%;}
+  }
+
+  .y1_x5 {
+    animation-name: y1_x5;
+  }
+  @keyframes y1_x5 {
+    0%   {left:54%; top:42%;}
+  100%  {left:35%; top:36%;}
+  }
+
+  .y1_x6 {
+    animation-name: y1_x6;
+  }
+  @keyframes y1_x6 {
+    0%   {left:54%; top:42%;}
+  100%  {left:41%; top:36%;}
+  }
+
+  .y2_x1 {
+    animation-name: y2_x1;
+  }
+  @keyframes y2_x1 {
+    0%   {left:71%; top:36%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .y2_x2 {
+    animation-name: y2_x2;
+  }
+  @keyframes y2_x2 {
+    0%   {left:71%; top:36%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .y2_x3 {
+    animation-name: y2_x3;
+  }
+  @keyframes y2_x3 {
+    0%   {left:71%; top:36%;}
+    100%   {left:56%; top:51%;}
+  }
+
+  .y2_x4 {
+    animation-name: y2_x4;
+  }
+  @keyframes y2_x4 {
+    0%   {left:60%; top:42%;}
+  100%  {left:41%; top:54%;}
+  }
+
+  .y2_x5 {
+    animation-name: y2_x5;
+  }
+  @keyframes y2_x5 {
+    0%   {left:60%; top:42%;}
+  100%  {left:35%; top:36%;}
+  }
+
+  .y2_x6 {
+    animation-name: y2_x6;
+  }
+  @keyframes y2_x6 {
+    0%   {left:60%; top:42%;}
+  100%  {left:41%; top:36%;}
+  }
+
+  .y3_x1 {
+    animation-name: y3_x1;
+  }
+  @keyframes y3_x1 {
+    0%   {left:71%; top:51%;}
+  100%  {left:56%; top:26%;}
+  }
+
+  .y3_x2 {
+    animation-name: y3_x2;
+  }
+  @keyframes y3_x2 {
+    0%   {left:71%; top:51%;}
+  100%  {left:56%; top:36%;}
+  }
+
+  .y3_x3 {
+    animation-name: y3_x3;
+  }
+  @keyframes y3_x3 {
+    0%   {left:71%; top:51%;}
+    100%   {left:56%; top:51%;}
+  }
+
+  .y3_x4 {
+    animation-name: y3_x4;
+  }
+  @keyframes y3_x4 {
+    0%   {left:54%; top:54%;}
+  100%  {left:41%; top:54%;}
+  }
+
+  .y3_x5 {
+    animation-name: y3_x5;
+  }
+  @keyframes y3_x5 {
+    0%   {left:54%; top:54%;}
+  100%  {left:35%; top:36%;}
+  }
+
+  .y3_x6 {
+    animation-name: y3_x6;
+  }
+  @keyframes y3_x6 {
+    0%   {left:54%; top:54%;}
+  100%  {left:41%; top:36%;}
+  }
+
+  .y4_x1 {
+    animation-name: y4_x1;
+  }
+  @keyframes y4_x1 {
+    0%   {left:71%; top:61%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .y4_x2 {
+    animation-name: y4_x2;
+  }
+  @keyframes y4_x2 {
+    0%   {left:71%; top:61%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .y4_x3 {
+    animation-name: y4_x3;
+  }
+  @keyframes y4_x3 {
+    0%   {left:71%; top:61%;}
+    100%   {left:56%; top:51%;}
+  }
+
+  .y4_x4 {
+    animation-name: y4_x4;
+  }
+  @keyframes y4_x4 {
+    0%   {left:71%; top:61%;}
+  100%  {left:56%; top:61%;}
+  }
+
+  .y4_x5 {
+    animation-name: y4_x5;
+  }
+  @keyframes y4_x5 {
+    0%   {left:60%; top:54%;}
+  100%  {left:35%; top:36%;}
+  }
+
+  .y4_x6 {
+    animation-name: y4_x6;
+  }
+  @keyframes y4_x6 {
+    0%   {left:60%; top:54%;}
+  100%  {left:41%; top:36%;}
+  }
+
+  .y5_x1 {
+    animation-name: y5_x1;
+  }
+  @keyframes y5_x1 {
+    0%   {left:54%; top:36%;}
+  100%  {left:35%; top:42%;}
+  }
+
+  .y5_x2 {
+    animation-name: y5_x2;
+  }
+  @keyframes y5_x2 {
+    0%   {left:54%; top:36%;}
+  100%  {left:41%; top:42%;}
+  }
+
+  .y5_x3 {
+    animation-name: y5_x3;
+  }
+  @keyframes y5_x3 {
+    0%   {left:54%; top:36%;}
+  100%  {left:35%; top:54%;}
+  }
+
+  .y5_x4 {
+    animation-name: y5_x4;
+  }
+  @keyframes y5_x4 {
+    0%   {left:54%; top:36%;}
+  100%  {left:41%; top:54%;}
+  }
+
+  .y5_x5 {
+    animation-name: y5_x5;
+  }
+  @keyframes y5_x5 {
+    0%   {left:54%; top:36%;}
+  100%  {left:35%; top:36%;}
+  }
+
+  .y5_x6 {
+    animation-name: y5_x6;
+  }
+  @keyframes y5_x6 {
+    0%   {left:54%; top:36%;}
+  100%  {left:41%; top:36%;}
+  }
+
+  .y6_x1 {
+    animation-name: y6_x1;
+  }
+  @keyframes y6_x1 {
+    0%   {left:60%; top:36%;}
+  100%  {left:35%; top:42%;}
+  }
+
+  .y6_x2 {
+    animation-name: y6_x2;
+  }
+  @keyframes y6_x2 {
+    0%   {left:60%; top:36%;}
+  100%  {left:41%; top:42%;}
+  }
+
+  .y6_x3 {
+    animation-name: y6_x3;
+  }
+  @keyframes y6_x3 {
+    0%   {left:60%; top:36%;}
+  100%  {left:35%; top:54%;}
+  }
+
+  .y6_x4 {
+    animation-name: y6_x4;
+  }
+  @keyframes y6_x4 {
+    0%   {left:60%; top:36%;}
+  100%  {left:41%; top:54%;}
+  }
+
+  .y6_x5 {
+    animation-name: y6_x5;
+  }
+  @keyframes y6_x5 {
+    0%   {left:60%; top:36%;}
+  100%  {left:35%; top:36%;}
+  }
+
+  .y6_x6 {
+    animation-name: y6_x6;
+  }
+  @keyframes y6_x6 {
+    0%   {left:60%; top:36%;}
+  100%  {left:41%; top:36%;}
+  }
+
+  .x1_y1 {
+    animation-name: x1_y1;
+  }
+  @keyframes x1_y1 {
+    0%   {left:35%; top:42%;}
+  100%  {left:54%; top:42%;}
+  }
+
+  .x2_y1 {
+    animation-name: x2_y1;
+  }
+  @keyframes x2_y1 {
+    0%   {left:56%; top:36%;}
+    100%  {left:71%; top:26%;}
+  }
+
+  .x3_y1 {
+    animation-name: x3_y1;
+  }
+  @keyframes x3_y1 {
+    0%   {left:56%; top:51%;}
+    100%  {left:71%; top:26%;}
+  }
+
+  .x4_y1 {
+    animation-name: x4_y1;
+  }
+  @keyframes x4_y1 {
+    0%   {left:41%; top:54%;}
+  100%  {left:54%; top:42%;}
+  }
+
+  .x5_y1 {
+    animation-name: x5_y1;
+  }
+  @keyframes x5_y1 {
+    0%   {left:35%; top:36%;}
+  100%  {left:54%; top:42%;}
+  }
+
+  .x6_y1 {
+    animation-name: x6_y1;
+  }
+  @keyframes x6_y1 {
+    0%   {left:41%; top:36%;}
+  100%  {left:54%; top:42%;}
+  }
+
+  .x1_y2 {
+    animation-name: x1_y2;
+  }
+  @keyframes x1_y2 {
+    0%   {left:56%; top:26%;}
+    100%  {left:71%; top:36%;}
+  }
+
+  .x2_y2 {
+    animation-name: x2_y2;
+  }
+  @keyframes x2_y2 {
+    0%   {left:41%; top:42%;}
+  100%  {left:60%; top:42%;}
+  }
+
+  .x3_y2 {
+    animation-name: x3_y2;
+  }
+  @keyframes x3_y2 {
+    0%   {left:56%; top:51%;}
+    100%  {left:71%; top:36%;}
+  }
+
+  .x4_y2 {
+    animation-name: x4_y2;
+  }
+  @keyframes x4_y2 {
+    0%   {left:41%; top:54%;}
+  100%  {left:60%; top:42%;}
+  }
+
+  .x5_y2 {
+    animation-name: x5_y2;
+  }
+  @keyframes x5_y2 {
+    0%   {left:35%; top:36%;}
+  100%  {left:60%; top:42%;}
+  }
+
+  .x6_y2 {
+    animation-name: x6_y2;
+  }
+  @keyframes x6_y2 {
+    0%   {left:41%; top:36%;}
+  100%  {left:60%; top:42%;}
+  }
+
+  .x1_y3 {
+    animation-name: x1_y3;
+  }
+  @keyframes x1_y3 {
+    0%   {left:56%; top:26%;}
+  100%  {left:71%; top:51%;}
+  }
+
+  .x2_y3 {
+    animation-name: x2_y3;
+  }
+  @keyframes x2_y3 {
+    0%   {left:56%; top:36%;}
+    100%  {left:71%; top:51%;}
+  }
+
+  .x3_y3 {
+    animation-name: x3_y3;
+  }
+  @keyframes x3_y3 {
+    0%   {left:56%; top:51%;}
+    100%  {left:71%; top:51%;}
+  }
+
+  .x4_y3 {
+    animation-name: x4_y3;
+  }
+  @keyframes x4_y3 {
+    0%   {left:56%; top:61%;}
+  100%  {left:71%; top:51%;}
+  }
+
+  .x5_y3 {
+    animation-name: x5_y3;
+  }
+  @keyframes x5_y3 {
+    0%   {left:35%; top:36%;}
+  100%  {left:54%; top:54%;}
+  }
+
+  .x6_y3 {
+    animation-name: x6_y3;
+  }
+  @keyframes x6_y3 {
+    0%   {left:41%; top:36%;}
+  100%  {left:54%; top:54%;}
+  }
+
+  .x1_y4 {
+    animation-name: x1_y4;
+  }
+  @keyframes x1_y4 {
+    0%   {left:35%; top:42%;}
+  100%  {left:60%; top:54%;}
+  }
+
+  .x2_y4 {
+    animation-name: x2_y4;
+  }
+  @keyframes x2_y4 {
+    0%   {left:56%; top:36%;}
+    100%  {left:71%; top:61%;}
+  }
+
+  .x3_y4 {
+    animation-name: x3_y4;
+  }
+  @keyframes x3_y4 {
+    0%   {left:56%; top:51%;}
+  100%  {left:71%; top:61%;}
+  }
+
+  .x4_y4 {
+    animation-name: x4_y4;
+  }
+  @keyframes x4_y4 {
+    0%   {left:56%; top:61%;}
+    100%  {left:71%; top:61%;}
+  }
+
+  .x5_y4 {
+    animation-name: x5_y4;
+  }
+  @keyframes x5_y4 {
+    0%   {left:35%; top:36%;}
+  100%  {left:60%; top:54%;}
+  }
+
+  .x6_y4 {
+    animation-name: x6_y4;
+  }
+  @keyframes x6_y4 {
+    0%   {left:41%; top:36%;}
+  100%  {left:60%; top:54%;}
+  }
+
+  .x1_y5 {
+    animation-name: x1_y5;
+  }
+  @keyframes x1_y5 {
+    0%   {left:35%; top:42%;}
+  100%  {left:54%; top:36%;}
+  }
+
+  .x2_y5 {
+    animation-name: x2_y5;
+  }
+  @keyframes x2_y5 {
+    0%   {left:41%; top:42%;}
+  100%  {left:54%; top:36%;}
+  }
+
+  .x3_y5 {
+    animation-name: x3_y5;
+  }
+  @keyframes x3_y5 {
+    0%   {left:35%; top:54%;}
+  100%  {left:54%; top:36%;}
+  }
+
+  .x4_y5 {
+    animation-name: x4_y5;
+  }
+  @keyframes x4_y5 {
+    0%   {left:41%; top:54%;}
+  100%  {left:54%; top:36%;}
+  }
+
+  .x5_y5 {
+    animation-name: x5_y5;
+  }
+  @keyframes x5_y5 {
+    0%   {left:35%; top:36%;}
+  100%  {left:54%; top:36%;}
+  }
+
+  .x6_y5 {
+    animation-name: x6_y5;
+  }
+  @keyframes x6_y5 {
+    0%   {left:41%; top:36%;}
+  100%  {left:54%; top:36%;}
+  }
+
+  .x1_y6 {
+    animation-name: x1_y6;
+  }
+  @keyframes x1_y6 {
+    0%   {left:35%; top:42%;}
+  100%  {left:60%; top:36%;}
+  }
+
+  .x2_y6 {
+    animation-name: x2_y6;
+  }
+  @keyframes x2_y6 {
+    0%   {left:41%; top:42%;}
+  100%  {left:60%; top:36%;}
+  }
+
+  .x3_y6 {
+    animation-name: x3_y6;
+  }
+  @keyframes x3_y6 {
+    0%   {left:35%; top:54%;}
+  100%  {left:60%; top:36%;}
+  }
+
+  .x4_y6 {
+    animation-name: x4_y6;
+  }
+  @keyframes x4_y6 {
+    0%   {left:41%; top:54%;}
+  100%  {left:60%; top:36%;}
+  }
+
+  .x5_y6 {
+    animation-name: x5_y6;
+  }
+  @keyframes x5_y6 {
+    0%   {left:35%; top:36%;}
+  100%  {left:60%; top:36%;}
+  }
+
+  .x6_y6 {
+    animation-name: x6_y6;
+  }
+  @keyframes x6_y6 {
+    0%   {left:41%; top:36%;}
+  100%  {left:60%; top:36%;}
+  }
+
+  .x1_x1 {
+    animation-name: x1_x1;
+  }
+  @keyframes x1_x1 {
+    0%   {left:56%; top:26%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .x1_x2 {
+    animation-name: x1_x2;
+  }
+  @keyframes x1_x2 {
+    0%   {left:56%; top:26%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .x1_x3 {
+    animation-name: x1_x3;
+  }
+  @keyframes x1_x3 {
+    0%   {left:56%; top:26%;}
+    100%  {left:56%; top:51%;}
+  }
+
+  .x1_x4 {
+    animation-name: x1_x4;
+  }
+  @keyframes x1_x4 {
+    0%   {left:56%; top:26%;}
+    100%  {left:56%; top:61%;}
+  }
+
+  .x1_x5 {
+    animation-name: x1_x5;
+  }
+  @keyframes x1_x5 {
+    0%   {left:35%; top:42%;}
+    100%  {left:35%; top:36%;}
+  }
+
+  .x1_x6 {
+    animation-name: x1_x6;
+  }
+  @keyframes x1_x6 {
+    0%   {left:35%; top:42%;}
+    100%  {left:41%; top:36%;}
+  }
+
+  .x2_x1 {
+    animation-name: x2_x1;
+  }
+  @keyframes x2_x1 {
+    0%   {left:56%; top:36%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .x2_x2 {
+    animation-name: x2_x2;
+  }
+  @keyframes x2_x2 {
+    0%   {left:56%; top:36%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .x2_x3 {
+    animation-name: x2_x3;
+  }
+  @keyframes x2_x3 {
+    0%   {left:56%; top:36%;}
+    100%  {left:56%; top:51%;}
+  }
+
+  .x2_x4 {
+    animation-name: x2_x4;
+  }
+  @keyframes x2_x4 {
+    0%   {left:56%; top:36%;}
+    100%  {left:56%; top:61%;}
+  }
+
+  .x2_x5 {
+    animation-name: x2_x5;
+  }
+  @keyframes x2_x5 {
+    0%   {left:41%; top:42%;}
+    100%  {left:35%; top:36%;}
+  }
+
+  .x2_x6 {
+    animation-name: x2_x6;
+  }
+  @keyframes x2_x6 {
+    0%   {left:41%; top:42%;}
+    100%  {left:41%; top:36%;}
+  }
+
+  .x3_x1 {
+    animation-name: x3_x1;
+  }
+  @keyframes x3_x1 {
+    0%   {left:56%; top:51%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .x3_x2 {
+    animation-name: x3_x2;
+  }
+  @keyframes x3_x2 {
+    0%   {left:56%; top:51%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .x3_x3 {
+    animation-name: x3_x3;
+  }
+  @keyframes x3_x3 {
+    0%   {left:56%; top:51%;}
+    100%  {left:56%; top:51%;}
+  }
+
+  .x3_x4 {
+    animation-name: x3_x4;
+  }
+  @keyframes x3_x4 {
+    0%   {left:56%; top:51%;}
+    100%  {left:56%; top:61%;}
+  }
+
+  .x3_x5 {
+    animation-name: x3_x5;
+  }
+  @keyframes x3_x5 {
+    0%   {left:35%; top:54%;}
+    100%  {left:35%; top:36%;}
+  }
+
+  .x3_x6 {
+    animation-name: x3_x6;
+  }
+  @keyframes x3_x6 {
+    0%   {left:35%; top:54%;}
+    100%  {left:41%; top:36%;}
+  }
+
+  .x4_x1 {
+    animation-name: x4_x1;
+  }
+  @keyframes x4_x1 {
+    0%   {left:56%; top:61%;}
+    100%  {left:56%; top:26%;}
+  }
+
+  .x4_x2 {
+    animation-name: x4_x2;
+  }
+  @keyframes x4_x2 {
+    0%   {left:56%; top:61%;}
+    100%  {left:56%; top:36%;}
+  }
+
+  .x4_x3 {
+    animation-name: x4_x3;
+  }
+  @keyframes x4_x3 {
+    0%   {left:41%; top:54%;}
+    100%  {left:35%; top:54%;}
+  }
+
+  .x4_x4 {
+    animation-name: x4_x4;
+  }
+  @keyframes x4_x4 {
+    0%   {left:56%; top:61%;}
+    100%  {left:56%; top:61%;}
+  }
+
+  .x4_x5 {
+    animation-name: x4_x5;
+  }
+  @keyframes x4_x5 {
+    0%   {left:41%; top:54%;}
+    100%  {left:35%; top:36%;}
+  }
+
+  .x4_x6 {
+    animation-name: x4_x6;
+  }
+  @keyframes x4_x6 {
+    0%   {left:41%; top:54%;}
+    100%  {left:41%; top:36%;}
+  }
+
+  .x5_x1 {
+    animation-name: x5_x1;
+  }
+  @keyframes x5_x1 {
+    0%   {left:35%; top:36%;}
+    100%  {left:35%; top:42%;}
+  }
+
+  .x5_x2 {
+    animation-name: x5_x2;
+  }
+  @keyframes x5_x2 {
+    0%   {left:35%; top:36%;}
+    100%  {left:41%; top:42%;}
+  }
+
+  .x5_x3 {
+    animation-name: x5_x3;
+  }
+  @keyframes x5_x3 {
+    0%   {left:35%; top:36%;}
+    100%  {left:35%; top:54%;}
+  }
+
+  .x5_x4 {
+    animation-name: x5_x4;
+  }
+  @keyframes x5_x4 {
+    0%   {left:35%; top:36%;}
+    100%  {left:41%; top:54%;}
+  }
+
+  .x5_x5 {
+    animation-name: x5_x5;
+  }
+  @keyframes x5_x5 {
+    0%   {left:35%; top:36%;}
+    100%  {left:35%; top:36%;}
+  }
+
+  .x5_x6 {
+    animation-name: x5_x6;
+  }
+  @keyframes x5_x6 {
+    0%   {left:35%; top:36%;}
+    100%  {left:41%; top:36%;}
+  }
+
+  .y1_y1 {
+    animation-name: y1_y1;
+  }
+  @keyframes y1_y1 {
+    0%   {left:71%; top:26%;}
+    100%  {left:71%; top:26%;}
+  }
+
+  .y1_y2 {
+    animation-name: y1_y2;
+  }
+  @keyframes y1_y2 {
+    0%   {left:71%; top:26%;}
+    100%  {left:71%; top:36%;}
+  }
+
+  .y1_y3 {
+    animation-name: y1_y3;
+  }
+  @keyframes y1_y3 {
+    0%   {left:71%; top:26%;}
+    100%  {left:71%; top:51%;}
+  }
+
+  .y1_y4 {
+    animation-name: y1_y4;
+  }
+  @keyframes y1_y4 {
+    0%   {left:71%; top:26%;}
+    100%  {left:71%; top:61%;}
+  }
+
+  .y1_y5 {
+    animation-name: y1_y5;
+  }
+  @keyframes y1_y5 {
+    0%   {left:54%; top:42%;}
+    100%  {left:54%; top:36%;}
+  }
+
+  .y1_y6 {
+    animation-name: y1_y6;
+  }
+  @keyframes y1_y6 {
+    0%   {left:54%; top:42%;}
+    100%  {left:60%; top:36%;}
+  }
+
+  .y2_y1 {
+    animation-name: y2_y1;
+  }
+  @keyframes y2_y1 {
+    0%   {left:60%; top:42%;}
+    100%  {left:54%; top:42%;}
+  }
+
+  .y2_y2 {
+    animation-name: y2_y2;
+  }
+  @keyframes y2_y2 {
+    0%   {left:71%; top:36%;}
+    100%  {left:71%; top:36%;}
+  }
+
+  .y2_y3 {
+    animation-name: y2_y3;
+  }
+  @keyframes y2_y3 {
+    0%   {left:60%; top:42%;}
+    100%  {left:54%; top:54%;}
+  }
+
+  .y2_y4 {
+    animation-name: y2_y4;
+  }
+  @keyframes y2_y4 {
+    0%   {left:71%; top:36%;}
+    100%  {left:71%; top:61%;}
+  }
+
+  .y2_y5 {
+    animation-name: y2_y5;
+  }
+  @keyframes y2_y5 {
+    0%   {left:60%; top:42%;}
+    100%  {left:54%; top:36%;}
+  }
+
+  .y2_y6 {
+    animation-name: y2_y6;
+  }
+  @keyframes y2_y6 {
+    0%   {left:60%; top:42%;}
+    100%  {left:60%; top:36%;}
+  }
+
+  .y3_y1 {
+    animation-name: y3_y1;
+  }
+  @keyframes y3_y1 {
+    0%   {left:71%; top:51%;}
+    100%  {left:71%; top:26%;}
+  }
+
+  .y3_y2 {
+    animation-name: y3_y2;
+  }
+  @keyframes y3_y2 {
+    0%   {left:71%; top:51%;}
+    100%  {left:71%; top:36%;}
+  }
+
+  .y3_y3 {
+    animation-name: y3_y3;
+  }
+  @keyframes y3_y3 {
+    0%   {left:71%; top:51%;}
+    100%  {left:71%; top:51%;}
+  }
+
+  .y3_y4 {
+    animation-name: y3_y4;
+  }
+  @keyframes y3_y4 {
+    0%   {left:71%; top:51%;}
+    100%  {left:71%; top:61%;}
+  }
+
+  .y3_y5 {
+    animation-name: y3_y5;
+  }
+  @keyframes y3_y5 {
+    0%   {left:54%; top:54%;}
+    100%  {left:54%; top:36%;}
+  }
+
+  .y3_y6 {
+    animation-name: y3_y6;
+  }
+  @keyframes y3_y6 {
+    0%   {left:54%; top:54%;}
+    100%  {left:60%; top:36%;}
+  }
+
+  .y4_y1 {
+    animation-name: y4_y1;
+  }
+  @keyframes y4_y1 {
+    0%   {left:71%; top:61%;}
+    100%  {left:71%; top:26%;}
+  }
+
+  .y4_y2 {
+    animation-name: y4_y2;
+  }
+  @keyframes y4_y2 {
+    0%   {left:71%; top:61%;}
+    100%  {left:71%; top:36%;}
+  }
+
+  .y4_y3 {
+    animation-name: y4_y3;
+  }
+  @keyframes y4_y3 {
+    0%   {left:60%; top:54%;}
+    100%  {left:54%; top:54%;}
+  }
+
+  .y4_y4 {
+    animation-name: y4_y4;
+  }
+  @keyframes y4_y4 {
+    0%   {left:71%; top:61%;}
+    100%  {left:71%; top:61%;}
+  }
+
+  .y4_y5 {
+    animation-name: y4_y5;
+  }
+  @keyframes y4_y5 {
+    0%   {left:60%; top:54%;}
+    100%  {left:54%; top:36%;}
+  }
+
+  .y4_y6 {
+    animation-name: y4_y6;
+  }
+  @keyframes y4_y6 {
+    0%   {left:60%; top:54%;}
+    100%  {left:60%; top:36%;}
+  }
+
+  .y5_y1 {
+    animation-name: y5_y1;
+  }
+  @keyframes y5_y1 {
+    0%   {left:54%; top:36%;}
+    100%  {left:54%; top:42%;}
+  }
+
+  .y5_y2 {
+    animation-name: y5_y2;
+  }
+  @keyframes y5_y2 {
+    0%   {left:54%; top:36%;}
+    100%  {left:60%; top:42%;}
+  }
+
+  .y5_y3 {
+    animation-name: y5_y3;
+  }
+  @keyframes y5_y3 {
+    0%   {left:54%; top:36%;}
+    100%  {left:54%; top:54%;}
+  }
+
+  .y5_y4 {
+    animation-name: y5_y4;
+  }
+  @keyframes y5_y4 {
+    0%   {left:54%; top:36%;}
+    100%  {left:60%; top:54%;}
+  }
+
+  .y5_y5 {
+    animation-name: y5_y5;
+  }
+  @keyframes y5_y5 {
+    0%   {left:54%; top:36%;}
+    100%  {left:54%; top:36%;}
+  }
+
+  .y5_y6 {
+    animation-name: y5_y6;
+  }
+
+  @keyframes y5_y6 {
+    0%   {left:54%; top:36%;}
+    100%  {left:60%; top:36%;}
+  }

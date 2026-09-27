@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Flexible Mapping Task</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="prefetch" href="exp-demo.html">
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>灵活映射任务 (4)</h1>
+
+        <div id="step1" class="step-content active">
+            <p class="note-title">注意：</p>
+        </div>
+
+        <div id="step2" class="step-content">
+            <p class="note-title">注意：</p>
+            <ul class="note-list">
+                <li>类比题中的前两项（即需要您判断其关系的部分）可能以文字、数字或图形的形式呈现。</li>
+            </ul>
+        </div>
+
+        <div id="step3" class="step-content">
+            <p class="note-title">注意：</p>
+            <ul class="note-list">
+                <li>类比题中的前两项（即需要您判断其关系的部分）可能以文字、数字或图形的形式呈现。</li>
+                <li>这些项之间所蕴含的“规则”也可能涉及言语、数值或图形信息。不过，无论题目形式如何，解题方法都是一致的。</li>
+            </ul>
+            <p>具体来说，您需要先<strong>识别前两项之间的关系或规则</strong>，然后 <strong>将该规则应用到</strong> 第三项上，从而才能通过类比关系 <strong>确定第四项</strong> 来完成任务。</p>
+        </div>
+
+        <div id="step4" class="step-content">
+            <p class="note-title">注意：</p>
+            <ul class="note-list">
+                <li>类比题中的前两项（即需要您判断其关系的部分）可能以文字、数字或图形的形式呈现。</li>
+                <li>这些项之间所蕴含的“规则”也可能涉及言语、数值或图形信息。不过，无论题目形式如何，解题方法都是一致的。</li>
+            </ul>
+            <p>具体来说，您需要先<strong>识别前两项之间的关系或规则</strong>，然后 <strong>将该规则应用到</strong> 第三项上，从而才能通过类比关系 <strong>确定第四项</strong> 来完成任务。</p>
+            <ul class="note-list">
+                <li>随后， <strong>点击</strong> 相应的答案选项即可。</li>
+            </ul>
+            <p>本部分共包含 <strong>18 道类比题</strong>， 建议在 15 分钟内完成。请在尽量确保<strong>正确率</strong> 的同时，保持注意力集中，尽量<strong>快速</strong> 作答。</p>
+        </div>
+    </div>
+
+
+    <div class="footer-bar">
+        <div class="footer-left">
+            <button id="confirmBtn" class="confirm-button">&lt; 请点击鼠标左键继续 &gt;</button>
+            <button id="backBtn" class="confirm-button" style="display: none;">&lt; 返回 &gt;</button>
+        </div>
+        <div class="footer-right">
+            <button id="continueButton" class="continue-button" style="display: none;">点击 &lt;继续 &gt; 开始</button>
+        </div>
+    </div>
+
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const confirmBtn = document.getElementById('confirmBtn');
+        const continueButton = document.getElementById('continueButton');
+        const backBtn = document.getElementById('backBtn');
+
+        function handlePageClick() {
+            if (confirmBtn.style.display !== 'none') {
+                confirmBtn.click();
+            }
+        }
+
+        document.addEventListener('click', handlePageClick);
+
+        function handleConfirmClick() {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                
+                if (currentStep === totalSteps) {
+                    confirmBtn.style.display = 'none';
+                    continueButton.style.display = 'block';
+                    backBtn.style.display = 'block';
+                }
+            }
+        }
+
+        confirmBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            handleConfirmClick();
+        });
+
+        continueButton.addEventListener('click', function () {
+            window.location.href = 'exp-demo.html';
+        });
+
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'page3.html';
+        });
+    </script>
+</body>
+
+</html>

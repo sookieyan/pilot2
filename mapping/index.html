@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Flexible Mapping Task</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff" as="font" type="font/woff" crossorigin>
+    <link rel="prefetch" href="page1.html">
+    <link rel="prefetch" href="page2.html">
+    <link rel="prefetch" href="page3.html">
+    <link rel="prefetch" href="page4.html">
+</head>
+
+<body>
+    <div id="welcomeScreen" class="fullscreen-container">
+        <div class="fullscreen-message">
+            <p>请以全屏模式参与本实验。若退出全屏模式，实验将自动暂停。</p>
+            <p>请点击下方按钮进入全屏模式并继续。</p>
+        </div>
+        <button id="enterFullscreenBtn" class="fullscreen-button">继续</button>
+    </div>
+
+    <iframe id="contentFrame" src="about:blank"></iframe>
+
+    <div id="fullscreenAlert" class="fullscreen-alert">
+        <div class="fullscreen-message">
+            <p>您需要处于全屏模式才能继续实验！请点击下方按钮重新进入全屏模式。</p>
+        </div>
+        <button id="returnToFullscreenBtn" class="fullscreen-button">继续</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const enterFullscreenBtn = document.getElementById('enterFullscreenBtn');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const contentFrame = document.getElementById('contentFrame');
+            const fullscreenAlert = document.getElementById('fullscreenAlert');
+            const returnToFullscreenBtn = document.getElementById('returnToFullscreenBtn');
+
+            localStorage.removeItem('subject');
+            const urlParams = new URLSearchParams(window.location.search);
+            const subject = urlParams.get('subject');
+            if (subject) {
+                localStorage.setItem('subject', subject);
+                console.log("Get and store the subject from the URL: " + subject);
+            }
+
+            history.pushState(null, null, document.URL);
+            window.addEventListener('popstate', function() {
+                history.pushState(null, null, document.URL);
+            });
+
+            enterFullscreenBtn.addEventListener('click', function() {
+                requestFullscreen().then(() => {
+                    welcomeScreen.style.display = 'none';
+                    contentFrame.style.display = 'block';
+                    contentFrame.src = 'page1.html';
+                }).catch(err => {
+                    console.error('The full screen request was rejected:', err);
+                    alert('Please allow full screen mode to continue the experiment');
+                });
+            });
+
+            function requestFullscreen() {
+                if (document.documentElement.requestFullscreen) {
+                    return document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    return new Promise((resolve) => {
+                        document.documentElement.webkitRequestFullscreen();
+                        resolve();
+                    });
+                } else if (document.documentElement.msRequestFullscreen) {
+                    return new Promise((resolve) => {
+                        document.documentElement.msRequestFullscreen();
+                        resolve();
+                    });
+                }
+                return Promise.resolve();
+            }
+
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+            function handleFullscreenChange() {
+                if (!document.fullscreenElement && 
+                    !document.webkitFullscreenElement && 
+                    !document.mozFullScreenElement && 
+                    !document.msFullscreenElement) {
+                    fullscreenAlert.style.display = 'flex';
+
+                    history.pushState(null, null, document.URL);
+                } else {
+
+                    fullscreenAlert.style.display = 'none';
+                }
+            }
+
+            returnToFullscreenBtn.addEventListener('click', function() {
+                requestFullscreen();
+            });
+        });
+
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.action === 'loadPage') {
+                contentFrame.src = event.data.page;
+                history.pushState(null, null, document.URL);
+            }
+        });
+
+        // window.addEventListener('beforeunload', function(e) {
+        //     if (document.getElementById('contentFrame').style.display === 'block') {
+        //         e.preventDefault();
+        //         e.returnValue = 'The experiment is not complete. Are you sure you want to leave?';
+        //         return e.returnValue;
+        //     }
+        // });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USYD Cognitive Flexibility</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="prefetch" href="page2.html">
+</head>
+
+<body>
+    <div class="content-container">
+        <h1>灵活推理任务 (1)</h1>
+
+        <div id="step1" class="step-content">
+        </div>
+
+        <div id="step2" class="step-content">
+            <p>在本任务中，您需要解决不同的分类题。其中一些题目包含文字，一些包含数字，还有一些包含图形。</p>
+        </div>
+
+        <div id="step3" class="step-content">
+            <p>在开始之前，让我通过一个示例来向您解释操作方法。</p>
+        </div>
+    </div>
+
+    <div class="footer-bar">
+        <div class="left-button">
+            <button id="confirmBtn" class="confirm-button">&lt; 请点击鼠标左键继续 &gt;</button>
+        </div>
+        <div class="right-button">
+            <a href="page2.html" id="continueBtn" class="continue-button"><b>点击</b> 此处 &lt; 继续 &gt;</a>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const confirmBtn = document.getElementById('confirmBtn');
+        const continueBtn = document.getElementById('continueBtn');
+
+        document.addEventListener('click', function () {
+            currentStep++;
+
+            if (currentStep === 2) {
+                document.getElementById('step2').style.display = 'block';
+            } else if (currentStep === 3) {
+                document.getElementById('step3').style.display = 'block';
+                confirmBtn.style.display = 'none';
+                continueBtn.style.display = 'block';
+
+                document.removeEventListener('click');
+            }
+        });
+
+
+
+        // continueBtn.addEventListener('click', function() {
+        //     if (window.parent && window.parent !== window) {
+        //         window.parent.postMessage({ action: 'loadPage', page: 'page2.html' }, '*');
+        //     } else {
+        //         window.location.href = 'page2.html';
+        //     }
+        // });
+
+    </script>
+</body>
+
+</html>
