@@ -34,12 +34,21 @@
             const fullscreenAlert = document.getElementById('fullscreenAlert');
             const returnToFullscreenBtn = document.getElementById('returnToFullscreenBtn');
 
+            // ---- subject 参数（原有逻辑，保持不变） ----
             localStorage.removeItem('subject');
             const urlParams = new URLSearchParams(window.location.search);
             const subject = urlParams.get('subject');
             if (subject) {
                 localStorage.setItem('subject', subject);
                 console.log("Get and store the subject from the URL: " + subject);
+            }
+
+            // ---- next 参数（新增：记录"做完这个任务后该去哪一个任务"） ----
+            localStorage.removeItem('next');
+            const next = urlParams.get('next');
+            if (next) {
+                localStorage.setItem('next', next);
+                console.log("Get and store the next task from the URL: " + next);
             }
 
             history.pushState(null, null, document.URL);
@@ -105,14 +114,6 @@
                 history.pushState(null, null, document.URL);
             }
         });
-
-        // window.addEventListener('beforeunload', function(e) {
-        //     if (document.getElementById('contentFrame').style.display === 'block') {
-        //         e.preventDefault();
-        //         e.returnValue = 'The experiment is not complete. Are you sure you want to leave?';
-        //         return e.returnValue;
-        //     }
-        // });
     </script>
 </body>
 
