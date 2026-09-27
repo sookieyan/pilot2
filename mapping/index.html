@@ -4,16 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Flexible Mapping Task</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff" as="font" type="font/woff" crossorigin>
-    <link rel="prefetch" href="page1.html">
-    <link rel="prefetch" href="page2.html">
-    <link rel="prefetch" href="page3.html">
-    <link rel="prefetch" href="page4.html">
+    <title>USYD Cognitive Flexibility</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
@@ -42,12 +34,21 @@
             const fullscreenAlert = document.getElementById('fullscreenAlert');
             const returnToFullscreenBtn = document.getElementById('returnToFullscreenBtn');
 
+            // ---- subject 参数（原有逻辑，保持不变） ----
             localStorage.removeItem('subject');
             const urlParams = new URLSearchParams(window.location.search);
             const subject = urlParams.get('subject');
             if (subject) {
                 localStorage.setItem('subject', subject);
                 console.log("Get and store the subject from the URL: " + subject);
+            }
+
+            // ---- next 参数（新增：记录"做完这个任务后该去哪一个任务"） ----
+            localStorage.removeItem('next');
+            const next = urlParams.get('next');
+            if (next) {
+                localStorage.setItem('next', next);
+                console.log("Get and store the next task from the URL: " + next);
             }
 
             history.pushState(null, null, document.URL);
@@ -62,7 +63,7 @@
                     contentFrame.src = 'page1.html';
                 }).catch(err => {
                     console.error('The full screen request was rejected:', err);
-                    alert('Please allow full screen mode to continue the experiment');
+                    alert('请启用全屏模式以继续完成实验。');
                 });
             });
 
@@ -113,14 +114,6 @@
                 history.pushState(null, null, document.URL);
             }
         });
-
-        // window.addEventListener('beforeunload', function(e) {
-        //     if (document.getElementById('contentFrame').style.display === 'block') {
-        //         e.preventDefault();
-        //         e.returnValue = 'The experiment is not complete. Are you sure you want to leave?';
-        //         return e.returnValue;
-        //     }
-        // });
     </script>
 </body>
 
