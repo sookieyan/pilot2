@@ -46,33 +46,23 @@
     </div>
 
     <script>
+        // subject：被试编号；next：做完这个任务后该跳去哪一个任务文件夹（mapping / inference / sjt），
+        // 如果 next 是 "end" 或者没有值，说明这已经是这位被试的最后一个任务，不再跳转。
         const subject = localStorage.getItem('subject');
+        const next = localStorage.getItem('next');
         localStorage.removeItem('subject');
-        console.log(subject);
+        localStorage.removeItem('next');
+        console.log('subject:', subject, 'next:', next);
 
         document.getElementById('finishBtn').addEventListener('click', function() {
-            fetch('url.txt')
-                .then(response => response.text())
-                .then(url => {
-                    if (url && url.trim() !== '') {
-                        const redirectURL = new URL(url.trim());
-                        if (subject) {
-                            redirectURL.searchParams.append('subject', subject);
-                        }
-                        
-                        window.location.href = redirectURL.toString();
-                    } else {
-                        window.close();
-                        
-                        if (!window.closed) {
-                            alert("感谢您的参与！您现在可以安全地关闭此页面。");
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error reading URL file:', error);
-                    window.close();
-                });
+            if (next && next !== 'end') {
+                const redirectURL = '../' + next + '/index.html?subject=' + encodeURIComponent(subject || '') + '&next=end';
+                window.location.href = redirectURL;
+            } else {
+                document.querySelector('.completion-message').innerHTML =
+                    '<p>您已完成全部任务。</p><p>感谢您的参与！您现在可以关闭此页面。</p>';
+                document.getElementById('finishBtn').style.display = 'none';
+            }
         });
     </script>
 </body>
