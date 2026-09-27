@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>研究参与入口</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+  * { font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif; box-sizing: border-box; }
+  body { background: #f7f7f9; margin: 0; padding: 30px 16px; }
+  .card {
+    max-width: 720px; margin: 0 auto; background: #fff; border-radius: 8px;
+    padding: 32px 36px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); line-height: 1.8; font-size: 16px;
+  }
+  h1 { font-size: 22px; margin-top: 0; }
+  h2 { font-size: 18px; margin-top: 28px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  label.check-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 24px; font-weight: bold; }
+  label.check-row input { margin-top: 4px; }
+  .btn {
+    margin-top: 24px; padding: 12px 28px; font-size: 16px; border-radius: 6px;
+    border: none; background: #2E5395; color: #fff; cursor: pointer;
+  }
+  .btn:disabled { background: #b7c3d9; cursor: not-allowed; }
+  .field { margin-top: 20px; }
+  .field label.q { display: block; font-weight: bold; margin-bottom: 8px; }
+  .field input[type="text"], .field input[type="number"] {
+    width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid #ccc; border-radius: 4px;
+  }
+  .radio-group label { margin-right: 24px; font-weight: normal; }
+  .error-msg { color: #b00; font-size: 14px; margin-top: 10px; display: none; }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ===== 屏幕一：知情同意书 ===== -->
+  <div id="screen-consent" class="screen active">
+    <h1>知情同意书</h1>
+    <p>感谢您参与本研究项目！在决定是否参加本研究之前，请您仔细阅读以下内容，以了解研究的相关信息。您可以自由决定是否参与，并且在参与过程中或结束后随时退出，且不会产生任何不利影响。</p>
+
+    <h2>1. 研究目的</h2>
+    <p>本研究旨在考察一项认知任务的可行性与测量质量。在本研究中，您将在指导下完成两个认知任务。</p>
+
+    <h2>2. 实验流程</h2>
+    <p>您在点击问卷链接后，将首先阅读本知情同意书并确认是否同意参与。<br>
+    随后，您将完成两个认知任务，在开始前，您将完成简短的练习，以熟悉任务要求。<br>
+    任务完成后，您可以简单谈一下对任务的想法。<br>
+    整个实验预计耗时约 25–30分钟。</p>
+
+    <h2>3. 您的权利</h2>
+    <p>① 自愿参与权：您可以自由决定是否参与本研究，没有任何强制要求。<br>
+    ② 随时退出权：在实验过程中，您可以随时退出，无需说明原因。<br>
+    ③ 匿名与保密权：所有数据仅用于学术研究，您的个人信息将严格保密并匿名处理，结果仅以群体形式呈现，不会透露任何个人身份信息。<br>
+    ④ 知情权：实验结束后，您可以向研究人员咨询研究目的及相关信息。</p>
+
+    <h2>4. 风险与报酬</h2>
+    <p>本研究不涉及任何身体或心理风险。<br>
+    本研究无任何报酬或奖励。</p>
+
+    <h2>5. 数据使用</h2>
+    <p>所有数据仅用于学术研究，不会用于商业用途或提供给第三方。<br>
+    匿名化数据将在研究结束后保存3年，期满后统一销毁。</p>
+
+    <h2>同意声明</h2>
+    <p>我已仔细阅读并完全理解以上内容，愿意自愿参与本研究，并同意研究人员按照上述说明使用我的实验数据。</p>
+
+    <label class="check-row">
+      <input type="checkbox" id="consentCheckbox">
+      我同意参与本研究
+    </label>
+
+    <div>
+      <button id="consentContinueBtn" class="btn" disabled>继续</button>
+    </div>
+  </div>
+
+  <!-- ===== 屏幕二：基本信息问卷 ===== -->
+  <div id="screen-demo" class="screen">
+    <h1>基本信息</h1>
+    <p>亲爱的参与者：您好！诚邀您参与本次研究，请如实填写以下基础信息。本问卷所有数据仅用于学术研究，您的个人信息将严格保密，全程采用匿名方式处理。感谢您的配合！</p>
+
+    <div class="field">
+      <label class="q">1. 性别（必填）</label>
+      <div class="radio-group">
+        <label><input type="radio" name="gender" value="男"> 男</label>
+        <label><input type="radio" name="gender" value="女"> 女</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="q" for="ageInput">2. 年龄（必填）</label>
+      <input type="number" id="ageInput" min="1" max="120">
+    </div>
+
+    <div class="field">
+      <label class="q" for="fieldInput">3. 研究领域（必填）</label>
+      <input type="text" id="fieldInput" placeholder="请写明你的专业或研究方向，例如：人文、计算机科学、工程学">
+    </div>
+
+    <div class="field">
+      <label class="q">4. 是否有出国留学计划？（必填）</label>
+      <div class="radio-group">
+        <label><input type="radio" name="studyAbroad" value="是"> 是</label>
+        <label><input type="radio" name="studyAbroad" value="否"> 否</label>
+      </div>
+    </div>
+
+    <p class="error-msg" id="demoError">请完整填写以上所有必填项后再继续。</p>
+
+    <div>
+      <button id="demoSubmitBtn" class="btn">提交并开始任务</button>
+    </div>
+  </div>
+
+  <!-- ===== 屏幕三：提交中 ===== -->
+  <div id="screen-loading" class="screen">
+    <p>正在为您准备任务，请稍候…</p>
+  </div>
+
+</div>
+
+<script>
+//======================================================
+// 0. 基本参数
+//======================================================
+var DATAPIPE_EXPERIMENT_ID = "在这里填入你在 pipe.jspsych.org 申请到的 experimentID";
+
+// ABBA 顺序设计：6 个条件对应的任务顺序
+var CONDITIONS = {
+  A1: ["mapping", "sjt"],
+  A2: ["sjt", "mapping"],
+  B1: ["inference", "sjt"],
+  B2: ["sjt", "inference"],
+  C1: ["mapping", "inference"],
+  C2: ["inference", "mapping"]
+};
+
+function randomID(len) {
+  var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  var s = '';
+  for (var i = 0; i < len; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+  return s;
+}
+
+// 条件来源：网址里的 ?cond=A1 这种参数（推荐，配合预先分好的名单使用，保证每组人数精确）；
+// 如果网址里没带这个参数，就退回随机分配（6 选1，等概率），适合临时测试或不严格要求配额的场合。
+var urlParams = new URLSearchParams(window.location.search);
+var condParam = urlParams.get('cond');
+var condKeys = Object.keys(CONDITIONS);
+var cond = (condParam && CONDITIONS[condParam]) ? condParam : condKeys[Math.floor(Math.random() * condKeys.length)];
+
+var subjectID = randomID(10);
+
+//======================================================
+// 1. 屏幕切换逻辑
+//======================================================
+var consentCheckbox = document.getElementById('consentCheckbox');
+var consentContinueBtn = document.getElementById('consentContinueBtn');
+var screenConsent = document.getElementById('screen-consent');
+var screenDemo = document.getElementById('screen-demo');
+var screenLoading = document.getElementById('screen-loading');
+
+consentCheckbox.addEventListener('change', function () {
+  consentContinueBtn.disabled = !consentCheckbox.checked;
+});
+
+consentContinueBtn.addEventListener('click', function () {
+  screenConsent.classList.remove('active');
+  screenDemo.classList.add('active');
+  window.scrollTo(0, 0);
+});
+
+//======================================================
+// 2. 提交问卷 → 保存 intake 数据 → 跳转第一个任务
+//======================================================
+document.getElementById('demoSubmitBtn').addEventListener('click', function () {
+  var gender = (document.querySelector('input[name="gender"]:checked') || {}).value;
+  var age = document.getElementById('ageInput').value.trim();
+  var field = document.getElementById('fieldInput').value.trim();
+  var studyAbroad = (document.querySelector('input[name="studyAbroad"]:checked') || {}).value;
+
+  if (!gender || !age || !field || !studyAbroad) {
+    document.getElementById('demoError').style.display = 'block';
+    return;
+  }
+
+  screenDemo.classList.remove('active');
+  screenLoading.classList.add('active');
+
+  var tasks = CONDITIONS[cond];
+  var firstTask = tasks[0];
+  var secondTask = tasks[1];
+
+  var header = "subject,condition,task_order,consent_time,gender,age,field,study_abroad\n";
+  var row = [
+    subjectID, cond, tasks.join('->'), new Date().toISOString(),
+    gender, age, '"' + field.replace(/"/g, '""') + '"', studyAbroad
+  ].join(',');
+  var csvContent = header + row + "\n";
+  var filename = subjectID + "_intake.csv";
+
+  function goToFirstTask() {
+    window.location.href = firstTask + '/index.html?subject=' + encodeURIComponent(subjectID) + '&next=' + encodeURIComponent(secondTask);
+  }
+
+  fetch("https://pipe.jspsych.org/api/data/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "*/*" },
+    body: JSON.stringify({ experimentID: DATAPIPE_EXPERIMENT_ID, filename: filename, data: csvContent })
+  })
+  .then(goToFirstTask)
+  .catch(function (err) {
+    console.error('intake 数据保存失败，但不阻塞被试继续任务：', err);
+    goToFirstTask();
+  });
+});
+</script>
+</body>
+</html>
