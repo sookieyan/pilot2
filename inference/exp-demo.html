@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>USYD Cognitive Flexibility</title>
-  <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/jspsych.js"></script>>
+  <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/jspsych.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/21.0.1/min/jcanvas.min.js"></script>
   <script
@@ -19,6 +19,7 @@
   <script src="Editable-Parameters.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-html-button-response.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-fullscreen.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-preload.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-survey-text.js"></script>
   <link href="css/custom.css" rel="stylesheet" type="text/css">
   </link>
@@ -63,6 +64,7 @@
   experimentname = "FI" // Should correspond to the foldername on the cogflex server
   user = 'kit' // Should correspind to the user on the cogflex server
   ID = jsPsych.randomization.randomID();
+  var DATAPIPE_EXPERIMENT_ID = "oYF2zITgkJTm";
 
   //**********************//
   // Trial types
@@ -151,27 +153,35 @@
     const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replace(/:/g, '_');
     const filename = timestamp + "_" + date + ".csv";
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "./scripts/save_file.php", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(xhr.responseText);
+    // ---- 改为保存到 DataPipe（GitHub Pages 不能运行 save_file.php）----
+    var subjectForFile = localStorage.getItem('subject') || ('unknown_' + timestamp);
+    var pipeFilename = subjectForFile + "_inference_" + timestamp + ".csv";
 
-
-
-        if (window.parent && window.parent !== window) {
-          window.parent.location.href = 'end.html';
-        } else {
-          window.location.href = 'end.html';
-        }
+    function goToEnd() {
+      if (window.parent && window.parent !== window) {
+        window.parent.location.href = 'end.html';
+      } else {
+        window.location.href = 'end.html';
       }
-    };
+    }
 
-    xhr.send(JSON.stringify({
-      filename: filename,
-      filedata: csvContent
-    }));
+    fetch("https://pipe.jspsych.org/api/data/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      body: JSON.stringify({
+        experimentID: DATAPIPE_EXPERIMENT_ID,
+        filename: pipeFilename,
+        data: csvContent
+      })
+    })
+    .then(function (resp) {
+      if (!resp.ok) { console.error('DataPipe 返回错误状态：', resp.status); }
+      goToEnd();
+    })
+    .catch(function (err) {
+      console.error('DataPipe 保存失败：', err);
+      goToEnd();
+    });
   }
   // function saveData(data) {
   //   // Save
