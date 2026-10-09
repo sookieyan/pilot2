@@ -118,7 +118,14 @@
 var urlParams = new URLSearchParams(window.location.search);
 var subjectID = urlParams.get('subject') || jsPsych.randomization.randomID(10);
 var nextTask = urlParams.get('next') || '';   // 做完 SJT 之后该去哪个任务；空值或 "end" 表示这是最后一个任务
-var DATAPIPE_EXPERIMENT_ID = "在这里填入你在 pipe.jspsych.org 申请到的 experimentID";
+var DATAPIPE_EXPERIMENT_ID = "oYF2zITgkJTm";
+
+// 获取被试 IP（与 mapping / inference 插件使用同一个接口）。异步获取，失败则留空，不影响任务进行。
+var userIP = '';
+fetch('https://api.ipify.org?format=json')
+  .then(function (r) { return r.json(); })
+  .then(function (d) { userIP = d.ip || ''; })
+  .catch(function () { userIP = ''; });
 
 // 说明：结构化推理状态标签不再单独出题询问被试，
 // 而是直接从决策题里被试实际选择的字母（chosen_letter）反推得到——
@@ -539,7 +546,7 @@ function saveData() {
   var decisions = jsPsych.data.get().filter({ task: 'sjt_decision' }).values();
 
   var header = [
-    "subject", "scenario_id", "step_id", "driver_type",
+    "subject", "IP", "scenario_id", "step_id", "driver_type",
     "action_display_order", "action_letter", "action_text", "action_rt",
     "action_switch_count", "action_hover_without_click_count", "action_interaction_log",
     "reasoning_label_inferred",
@@ -554,7 +561,7 @@ function saveData() {
   var rows = decisions.map(function (d) {
     var reasoningLabel = inferReasoningLabel(d.scenario_id, d.step_id, d.chosen_letter);
     return [
-      subjectID, d.scenario_id, d.step_id, d.driver_type,
+      subjectID, userIP, d.scenario_id, d.step_id, d.driver_type,
       d.display_order, d.chosen_letter, csvField(d.chosen_text), d.rt,
       d.switch_count, d.hover_without_click_count, csvField(d.interaction_log),
       reasoningLabel,
@@ -569,7 +576,7 @@ function saveData() {
     method: "POST",
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
     body: JSON.stringify({
-      experimentID: DATAPIPE_EXPERIMENT_ID = "oYF2zITgkJTm",
+      experimentID: DATAPIPE_EXPERIMENT_ID,
       filename: filename,
       data: csvContent
     })
