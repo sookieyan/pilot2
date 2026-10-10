@@ -120,6 +120,46 @@ var subjectID = urlParams.get('subject') || jsPsych.randomization.randomID(10);
 var nextTask = urlParams.get('next') || '';   // 做完 SJT 之后该去哪个任务；空值或 "end" 表示这是最后一个任务
 var DATAPIPE_EXPERIMENT_ID = "oYF2zITgkJTm";
 
+//==== DATAPIPE-HELPER-START ====
+// ---- 保存到 DataPipe：带超时与重试，并把服务器返回的拒绝原因打印到浏览器 Console ----
+var DP_TIMEOUT_MS = 8000;   // 单次请求最长等待时间（毫秒）
+var DP_MAX_ATTEMPTS = 3;    // 网络失败、超时或服务器 5xx 时最多尝试次数
+function saveToDataPipe(filename, csvContent, done) {
+  var attempts = 0, finished = false;
+  function finish(ok) { if (!finished) { finished = true; done(ok); } }
+  function retryOrFinish(delayMs) {
+    if (attempts < DP_MAX_ATTEMPTS) { setTimeout(attempt, delayMs * attempts); } else { finish(false); }
+  }
+  function attempt() {
+    attempts++;
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, DP_TIMEOUT_MS) : null;
+    fetch("https://pipe.jspsych.org/api/data/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      body: JSON.stringify({ experimentID: DATAPIPE_EXPERIMENT_ID, filename: filename, data: csvContent }),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (resp) {
+      if (timer) clearTimeout(timer);
+      return resp.text().then(function (body) {
+        if (resp.ok) {
+          console.log('DataPipe 保存成功：', filename);
+          finish(true);
+        } else {
+          console.error('DataPipe 拒绝了这次提交（HTTP ' + resp.status + '）：', body);
+          if (resp.status >= 500) { retryOrFinish(1000); } else { finish(false); }
+        }
+      });
+    }).catch(function (err) {
+      if (timer) clearTimeout(timer);
+      console.error('DataPipe 请求失败（网络问题或超时）：', err);
+      retryOrFinish(1000);
+    });
+  }
+  attempt();
+}
+//==== DATAPIPE-HELPER-END ====
+
 // 获取被试 IP（与 mapping / inference 插件使用同一个接口）。异步获取，失败则留空，不影响任务进行。
 var userIP = '';
 fetch('https://api.ipify.org?format=json')
@@ -550,7 +590,7 @@ function saveData() {
     "action_display_order", "action_letter", "action_text", "action_rt",
     "action_switch_count", "action_hover_without_click_count", "action_interaction_log",
     "reasoning_label_inferred",
-    "time_elapsed"
+    "time_elapsed", "trial_type"
   ].join(',') + "\n";
 
   function csvField(v) {
@@ -565,32 +605,22 @@ function saveData() {
       d.display_order, d.chosen_letter, csvField(d.chosen_text), d.rt,
       d.switch_count, d.hover_without_click_count, csvField(d.interaction_log),
       reasoningLabel,
-      d.time_elapsed
+      d.time_elapsed, 'sjt_decision'
     ].join(',');
   });
 
   var csvContent = header + rows.join('\n');
   var filename = subjectID + "_sjt.csv";
 
-  fetch("https://pipe.jspsych.org/api/data/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "*/*" },
-    body: JSON.stringify({
-      experimentID: DATAPIPE_EXPERIMENT_ID,
-      filename: filename,
-      data: csvContent
-    })
-  })
-  .then(function () {
+  saveToDataPipe(filename, csvContent, function (ok) {
     if (nextTask && nextTask !== 'end') {
+      // 后面还有任务：无论保存是否成功都让被试继续，避免卡在中途（失败原因见浏览器 Console 与 DataPipe 后台）
       window.location.href = '../' + nextTask + '/index.html?subject=' + encodeURIComponent(subjectID) + '&next=end';
-    } else {
+    } else if (ok) {
       document.body.innerHTML = '<div style="text-align:center;margin-top:100px;font-size:20px;">数据已保存，感谢参与！你现在可以关闭此页面。</div>';
+    } else {
+      document.body.innerHTML = '<div style="text-align:center;margin-top:100px;font-size:18px;color:#b00;">数据保存时遇到网络问题，请不要关闭页面，并联系研究者。</div>';
     }
-  })
-  .catch(function (err) {
-    console.error(err);
-    document.body.innerHTML = '<div style="text-align:center;margin-top:100px;font-size:18px;color:#b00;">数据保存时遇到网络问题，请不要关闭页面，并联系研究者。</div>';
   });
 }
 
