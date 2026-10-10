@@ -66,6 +66,46 @@
   ID = jsPsych.randomization.randomID();
   var DATAPIPE_EXPERIMENT_ID = "oYF2zITgkJTm";
 
+//==== DATAPIPE-HELPER-START ====
+// ---- 保存到 DataPipe：带超时与重试，并把服务器返回的拒绝原因打印到浏览器 Console ----
+var DP_TIMEOUT_MS = 8000;   // 单次请求最长等待时间（毫秒）
+var DP_MAX_ATTEMPTS = 3;    // 网络失败、超时或服务器 5xx 时最多尝试次数
+function saveToDataPipe(filename, csvContent, done) {
+  var attempts = 0, finished = false;
+  function finish(ok) { if (!finished) { finished = true; done(ok); } }
+  function retryOrFinish(delayMs) {
+    if (attempts < DP_MAX_ATTEMPTS) { setTimeout(attempt, delayMs * attempts); } else { finish(false); }
+  }
+  function attempt() {
+    attempts++;
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, DP_TIMEOUT_MS) : null;
+    fetch("https://pipe.jspsych.org/api/data/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      body: JSON.stringify({ experimentID: DATAPIPE_EXPERIMENT_ID, filename: filename, data: csvContent }),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (resp) {
+      if (timer) clearTimeout(timer);
+      return resp.text().then(function (body) {
+        if (resp.ok) {
+          console.log('DataPipe 保存成功：', filename);
+          finish(true);
+        } else {
+          console.error('DataPipe 拒绝了这次提交（HTTP ' + resp.status + '）：', body);
+          if (resp.status >= 500) { retryOrFinish(1000); } else { finish(false); }
+        }
+      });
+    }).catch(function (err) {
+      if (timer) clearTimeout(timer);
+      console.error('DataPipe 请求失败（网络问题或超时）：', err);
+      retryOrFinish(1000);
+    });
+  }
+  attempt();
+}
+//==== DATAPIPE-HELPER-END ====
+
   //**********************//
   // Trial types
   //**********************//
@@ -133,7 +173,7 @@
   // SAVING
   //**********************//
   function saveData(data) {
-    let csvContent = "subject,IP,start_time,stimulus,response,response_time,inspection_time,correct\n";
+    let csvContent = "subject,IP,start_time,stimulus,response,response_time,inspection_time,correct,trial_type\n";
 
     for (let i = 0; i < data.length; i++) {
       const row = [
@@ -144,7 +184,8 @@
         data[i].response,
         data[i].response_time,
         data[i].inspection_time,
-        data[i].correct
+        data[i].correct,
+        'flexible-inference'
       ].join(',');
       csvContent += row + "\n";
     }
@@ -165,23 +206,7 @@
       }
     }
 
-    fetch("https://pipe.jspsych.org/api/data/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "*/*" },
-      body: JSON.stringify({
-        experimentID: DATAPIPE_EXPERIMENT_ID,
-        filename: pipeFilename,
-        data: csvContent
-      })
-    })
-    .then(function (resp) {
-      if (!resp.ok) { console.error('DataPipe 返回错误状态：', resp.status); }
-      goToEnd();
-    })
-    .catch(function (err) {
-      console.error('DataPipe 保存失败：', err);
-      goToEnd();
-    });
+    saveToDataPipe(pipeFilename, csvContent, goToEnd);
   }
   // function saveData(data) {
   //   // Save
