@@ -54,6 +54,18 @@
         localStorage.removeItem('next');
         console.log('subject:', subject, 'next:', next);
 
+        // 根据"后面是否还有任务"调整页面文字和按钮，避免被试误以为整个研究已经结束
+        const TASK_NAMES = { mapping: '灵活映射任务', inference: '灵活推理任务', sjt: '情境判断任务' };
+        if (next && next !== 'end') {
+            document.querySelector('.completion-message').innerHTML =
+                '<p>您已完成本项任务。</p>' +
+                '<p>后面还有一项任务（' + (TASK_NAMES[next] || '下一项任务') + '），请点击右下角\u201c继续\u201d进入下一项任务。</p>';
+            document.getElementById('finishBtn').innerHTML = '&lt; 继续 &gt;';
+        } else {
+            document.querySelector('.completion-message').innerHTML =
+                '<p>您已完成本研究的全部任务。</p><p>感谢您的参与！请点击右下角\u201c完成\u201d结束。</p>';
+        }
+
         document.getElementById('finishBtn').addEventListener('click', function() {
             if (next && next !== 'end') {
                 const redirectURL = '../' + next + '/index.html?subject=' + encodeURIComponent(subject || '') + '&next=end';
