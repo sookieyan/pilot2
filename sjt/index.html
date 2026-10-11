@@ -536,11 +536,43 @@ scenarios.forEach(function (scenario) {
   });
 });
 
+// ---- 最后一页：根据"后面是否还有任务"显示不同内容，避免被试误以为整个研究已经结束 ----
+var TASK_NAMES = { mapping: '灵活映射任务', inference: '灵活推理任务', sjt: '情境判断任务' };
+
+function buildFinalScreen() {
+  var hasNext = nextTask && nextTask !== 'end';
+  if (hasNext) {
+    return {
+      html: '<div class="sjt-bg-box">' +
+            '<p><strong>情境判断任务已完成。</strong></p>' +
+            '<p>后面还有一项任务（' + (TASK_NAMES[nextTask] || '下一项任务') + '），请点击下方\u201c继续\u201d进入下一项任务。</p>' +
+            '<p style="color:#666;font-size:15px;">点击后系统会先保存您的数据，请稍候，不要关闭页面。</p>' +
+            '</div>',
+      button: '继续'
+    };
+  }
+  return {
+    html: '<div class="sjt-bg-box">' +
+          '<p><strong>情境判断任务已完成。</strong></p>' +
+          '<p>您已完成本研究的全部任务，感谢您的参与！请点击下方\u201c提交\u201d保存数据，保存完成后即可关闭此页面。</p>' +
+          '</div>',
+    button: '提交'
+  };
+}
+
+function showSavingMessage() {
+  document.body.innerHTML = '<div style="text-align:center;margin-top:100px;font-size:20px;">正在保存数据，请不要关闭页面\u2026</div>';
+}
+
+var finalScreen = buildFinalScreen();
 timeline.push({
   type: 'html-button-response',
-  stimulus: '<div class="sjt-bg-box"><p>本部分任务已完成，感谢你的参与！</p></div>',
-  choices: ['提交'],
-  on_finish: function () { saveData(); }
+  stimulus: finalScreen.html,
+  choices: [finalScreen.button],
+  on_finish: function () {
+    showSavingMessage();   // 点击后立刻给出提示，避免保存期间出现空白页
+    saveData();
+  }
 });
 
 //======================================================
